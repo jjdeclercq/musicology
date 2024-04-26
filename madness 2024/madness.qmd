@@ -1,0 +1,1089 @@
+---
+title: "Madness 2024"
+author:
+- Josh DeClercq
+date: today
+format:
+  html:
+    grid: 
+      body-width: 1250px
+      sidebar-width: 250px
+      margin-width: 200px
+    toc: true
+    mainfont: albertus
+    theme: flatly
+toc-location: left
+toc-depth: 3
+execute:
+  echo: true
+  eval: true
+  warning: false
+number-sections: true
+monobackgroundcolor: "#BADBCB"
+code-fold: true
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+callout-appearance: minimal
+self-contained: true
+---
+
+
+
+```{r setup, include=FALSE}
+## load packages
+library(Hmisc)
+library(dplyr)
+library(magrittr)
+library(knitr)
+library(forcats)
+library(tableone)
+library(kableExtra)
+require(lubridate)
+require(tidyr)
+require(gt)
+require(gtsummary)
+require(rms)
+require(UpSetR)
+require(stringr)
+require(reactable)
+require(htmltools)
+require(reactablefmtr)
+require(naniar)
+require(ggplot2)
+require(readxl)
+require(googlesheets4)
+require(stringi)
+require(plotly)
+library(png)
+library(htmltools)
+require(ggbeeswarm)
+require(BradleyTerry2)
+
+devtools::source_url("https://raw.githubusercontent.com/jjdeclercq/Jmisc/main/Jmisc.R")
+devtools::source_url("https://raw.githubusercontent.com/jjdeclercq/VUMisC/main/JDmisc.R")
+
+```
+
+```{r}
+
+ratings <- read_sheet("1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 schedule") %>%
+  mutate(Date = ymd(Date)) %>% filter(Date <= ymd("2024.3.18")) %>% 
+  select(album, Charlie:Tyler)
+
+uu <- Cs(Charlie, Josh, Justin, Tyler)
+
+totals <- ratings %>% select(album, all_of(uu) ) %>% 
+  pivot_longer(., -1) %>% group_by(name) %>% 
+  summarise(Total = sum(value)) %>% arrange(desc(Total))
+
+ratings %<>% 
+  mutate(across(all_of(uu), ~10*(.x-min(.x))/(max(.x)-min(.x)), .names =  "{.col}_st")) %>% 
+  # mutate(across(all_of(uu), ~./sum(.x), .names =  "{.col}_st")) %>% 
+  # mutate(across(contains("_st"), ~.x*max(totals$Total))) %>% 
+  rowwise() %>% 
+  mutate(total = sum(across(all_of(uu))),
+         adj_total = sum(across(ends_with("_st")))) %>% ungroup() %>% 
+  arrange(desc(total)) %>% mutate(raw_rank = 1:n()) %>% 
+  arrange(desc(adj_total)) %>% mutate(adj_rank = 1:n()) %>% 
+  rowwise() %>% 
+  mutate(min_rating = min(across(ends_with("_st"))), t2 = total -min_rating) %>% ungroup() %>% 
+  arrange(desc(t2)) %>% mutate(adj_rank_2 = 1:n()) %>% 
+  arrange(desc(Charlie)) %>% mutate(charlie_rank = min_rank(desc(Charlie))) %>% 
+  arrange(desc(Josh)) %>% mutate(josh_rank = min_rank(desc(Josh))) %>% 
+  arrange(desc(Justin)) %>% mutate(justin_rank = min_rank(desc(Justin))) %>%
+  arrange(desc(Tyler)) %>% mutate(tyler_rank = min_rank(desc(Tyler))) %>% 
+  mutate(across(ends_with("_rank"), ~ifelse(.x <=20, "Top 20ish", "Nope"), .names = "{.col}_class")) %>% rowwise() %>% 
+  mutate(agg_advance = sum(across(all_of(c("tyler_rank_class", "josh_rank_class", "justin_rank_class", "charlie_rank_class")), ~sum(.x == "Top 20ish")))) %>% ungroup()
+
+
+
+mad_sheet <- read_sheet("1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 albums") %>%
+  mutate(artist = trimws(artist)) %>% 
+  mutate(a1 = tolower(artist), a1 = stri_trans_general(a1, 'latin-ascii')) %>% 
+  mutate(a2 = tolower(album), a2 = stri_trans_general(a2, 'latin-ascii')) %>% select(-n, -last_played)
+
+mad_sheet %<>% mutate(popularity = log(monthly*1000, 10)) %>% mutate(listen_date = ymd(listen_date), 
+                                                                     all_music = as.numeric(all_music))
+
+mad_sheet %<>% left_join(., 
+                       ratings,
+                       by = "album")
+
+```
+
+
+```{r}
+#| eval: false
+
+scrobbles <- lastfmR::get_scrobbles(user = "jjdeclercq")
+mad_tal <- scrobbles %>% mutate(date = ymd(as.Date(date))) %>% filter(date > ymd("2024.1.1")) %>% 
+  group_by(artist, album) %>%summarise(n = n(), last_played = max(date))%>%
+  separate(., album, into = c("album", "extra2"), sep = " \\[", fill = "right") %>% 
+  separate(., album, into = c("album", "extra"), sep = " \\(", fill = "right") %>% 
+  group_by(artist, album) %>% summarise(n = sum(n), last_played = max(last_played))%>% 
+  left_join(., fix_artists,  by = c("artist")) %>% mutate(artist = ifelse(!is.na(fix.a), fix.a, artist)) %>% 
+    mutate(a1 = tolower(artist), a1 = stri_trans_general(a1, 'latin-ascii')) %>% 
+    left_join(., fix_albums,  by = c("a1", "album")) %>% mutate(album = ifelse(!is.na(fix), fix, album)) %>% 
+  mutate(a2 = tolower(album), a2 = stri_trans_general(a2, 'latin-ascii')) %>% 
+  arrange(a1, a2, desc(n)) %>% 
+  group_by(a1, a2) %>% summarise(n = sum(n), album = first(album), artist = first(artist), last_played = max(last_played))
+
+
+mad_add <- left_join(mad_sheet , mad_tal %>% select(-artist, -album), by = c("a1", "a2")) %>% select(-a1, -a2) %>% 
+  mutate(n = replace_na(n, 0)) %>% mutate(listens = round(n/tracks,1))
+
+
+write_sheet(mad_add, "1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 albums")
+```
+
+
+
+```{r}
+mad_songs <- read.csv("madness_2024.csv") %>% namify() %>% 
+  rename(album = album_name, artist = artist_name_s_, date = release_date) %>%
+  separate(., album, into = c("album", "extra2"), sep = " \\[", fill = "right") %>% 
+  separate(., album, into = c("album", "extra"), sep = " \\(", fill = "right")%>% 
+  # left_join(., fix_artists,  by = c("artist")) %>% mutate(artist = ifelse(!is.na(fix.a), fix.a, artist)) %>% 
+    mutate(a1 = tolower(artist), a1 = stri_trans_general(a1, 'latin-ascii')) %>% 
+    # left_join(., fix_albums,  by = c("a1", "album")) %>% mutate(album = ifelse(!is.na(fix), fix, album)) %>% 
+  mutate(a2 = tolower(album), a2 = stri_trans_general(a2, 'latin-ascii'),y2 = str_sub(date, 1,4))%>% 
+  mutate(a1 = gsub(",.*","",a1))
+
+
+mad_sheet %<>% left_join(., mad_songs %>% group_by(a1) %>% summarise(liked_songs = n())) %>% 
+  mutate(liked_songs = replace_na(liked_songs, 0))
+
+### Add in album art
+fa <- data.frame(aa = list.files("png"))
+
+fax <-fuzzyjoin::stringdist_join(mad_sheet %>% select(a1, a2) %>% mutate(aa = paste(a1, a2, sep = "-")), 
+                                 fa,
+                by='aa', #match based on team
+                mode='left', #use left join
+                method = "jw", #use jw distance metric
+                max_dist=99,
+                distance_col='dist')%>% 
+  group_by(a2) %>% filter(dist == min(dist)) %>% ungroup() %>% 
+  select(a2, art = aa.y)
+
+mad_sheet %<>% left_join(., fax, by = "a2")
+
+
+
+```
+
+
+
+# Albums
+
+::: {#fig-albums layout-nrow=8}
+```{r results='asis'}
+cat(paste0("![](png/",mad_sheet$art,"){width=100px}\n"))
+```
+
+Prince
+:::
+
+::: panel-tabset
+## Stats by person
+```{r}
+mad_sheet %>% 
+  select(raw_rank_class, order, popularity, tracks, length, who, year, g2, liked_songs, all_music, rym) %>% 
+  jgt(., by = "who", overall = TRUE, add.p = TRUE, force.continuous = TRUE)
+```
+
+## Stats by genre
+
+```{r}
+mad_sheet %>% 
+  select(raw_rank_class,order, popularity, tracks, length, who, year, g2, liked_songs, all_music, rym) %>% 
+  jgt(., by = "g2", overall = TRUE, add.p = TRUE)
+```
+
+:::
+
+## Popularity by year and genre
+
+```{r}
+mad_sheet %>% 
+  ggplot(., aes(x= year, y = popularity, colour = g2)) +geom_point() +
+  facet_wrap(~who) +theme_bw()
+```
+
+## Albums details
+```{r}
+mad_sheet  %>% 
+  select(art,raw_rank, adj_rank, adj_rank_2, artist, album, order, who, year:liked_songs) %>% 
+  j.reactable(
+  .,
+  columns = list(
+    art = colDef(cell = function(value) {
+      image <- img(src = sprintf("png/%s", value), style = "height: 100px;", alt = "")
+      tagList(
+        div(style = "display: inline-block; width: 45px;", image),
+        # value
+      )})
+  )
+)
+
+
+```
+
+# Ratings
+
+## Overview
+::: panel-tabset
+### Table
+```{r}
+
+# ColorBrewer-inspired 3-color scale
+BuYlRd <- function(x) rgb(colorRamp(c("#7fb7d7", "#ffffbf", "salmon"))(x), maxColorValue = 255)
+
+mad_sheet %>% select(adj_rank, raw_rank,who,g2, album, Charlie:Tyler) %>% 
+  mutate(Avg = (Charlie +Josh + Justin +Tyler)/4) %>% 
+  na.omit() %>% 
+  mutate(raw_rank = ifelse(raw_rank <10, paste0("0",raw_rank), as.character(raw_rank))) %>% 
+  mutate(adj_rank = ifelse(adj_rank <10, paste0("0",adj_rank), as.character(adj_rank))) %>% 
+  j.reactable(., 
+              defaultColDef = colDef(
+    style = function(value) {
+      if (!is.numeric(value)) return()
+      normalized <- (value - 1.05) / (9.25 - 1.05)
+      color <- BuYlRd(normalized)
+      list(background = color)
+    },
+    format = colFormat(digits = 1),
+    minWidth = 50
+  ), defaultPageSize = 64
+  )
+
+
+```
+
+### Boxplot
+```{r}
+mad_sheet %>% select(album, all_of(uu) ) %>% 
+  pivot_longer(., -1) %>% 
+  ggplot(., aes(x = name, y = value, colour = name)) + geom_boxplot() +geom_beeswarm() +theme_minimal() + guides(colour = "none")
+```
+
+:::
+
+
+## Advanced to next round
+::: panel-tabset
+### By overall advancement
+```{r}
+mad_sheet %>% select(ends_with("rank_class"), agg_advance, who) %>% 
+  jgt(., by = "adj_rank_class", add.p = TRUE, overall = TRUE)
+```
+
+### By person selecting album
+```{r}
+mad_sheet %>% select(ends_with("rank_class"), agg_advance, who) %>% 
+  jgt(., by = "who", add.p = TRUE, overall = TRUE)
+```
+
+### By genre
+```{r}
+mad_sheet %>% select(ends_with("rank_class"), agg_advance, g2) %>% 
+  jgt(., by = "g2", add.p = TRUE, overall = TRUE)
+```
+
+### Rank data
+```{r}
+mad_sheet %>% 
+  select(album,agg_advance,raw_rank_class, raw_rank, ends_with("_rank"), agg_advance) %>% 
+  j.reactable(., defaultPageSize = 64, filterable = TRUE)
+```
+
+### Rank classification data
+```{r}
+mad_sheet %>% 
+  select(album,agg_advance,raw_rank_class, raw_rank, ends_with("_rank_class"), agg_advance) %>% 
+  j.reactable(., defaultPageSize = 64, filterable = TRUE)
+```
+
+:::
+
+## By picker 
+::: panel-tabset
+
+### Raw
+```{r}
+mad_sheet %>% select(Charlie:Tyler, who) %>% na.omit() %>% jgt(., by = "who", overall = TRUE, add.p = TRUE, spanner.size = 4, spanner.text = "Album picked by")
+```
+
+### Standardized
+```{r}
+mad_sheet %>% select(ends_with("_st"), who) %>% na.omit() %>% jgt(., by = "who", overall = TRUE, add.p = TRUE, spanner.size = 4, spanner.text = "Album picked by")
+```
+
+:::
+
+## Rounds of 8
+```{r}
+mad_sheet%>% 
+  mutate(o2 = cut2(order, cuts = c(9, 17, 25, 33, 41, 49, 57))) %>% 
+  select(o2, Charlie:Tyler) %>% 
+  pivot_longer(., -1) %>% 
+  ggplot(., aes(x = value, colour = o2)) + geom_density()
+
+mad_sheet%>% 
+  mutate(o2 = cut2(order, cuts = c(9, 17, 25, 33, 41, 49, 57))) %>% 
+  select(adj_rank_class, o2, Charlie:Tyler) %>% 
+  jgt(., by = "o2", add.p = TRUE)
+
+mad_sheet%>% 
+  mutate(o2 = cut2(order, cuts = c(9, 17, 25, 33, 41, 49, 57))) %>% 
+  select(o2, Charlie:Tyler) %>% 
+  pivot_longer(., -c(1)) %>% select(-name) %>% 
+  jgt(., by = "o2", add.p = TRUE)
+```
+
+
+
+
+## By genre
+::: panel-tabset
+### Raw
+```{r}
+mad_sheet %>% select(Charlie:Tyler, g2) %>% na.omit() %>% jgt(., by = "g2", overall = TRUE, add.p = TRUE, spanner.size = 5, spanner.text = "Genre")
+```
+
+### Standardized
+```{r}
+mad_sheet %>% select(ends_with("_st"), g2) %>% na.omit() %>% jgt(., by = "g2", overall = TRUE, add.p = TRUE, spanner.size = 4, spanner.text = "Album picked by")
+```
+
+:::
+
+## Average rating
+::: panel-tabset
+### Raw
+
+```{r}
+mad_sheet %>% select(Charlie:Tyler, who) %>% 
+  pivot_longer(., -c("who"), values_drop_na = TRUE) %>% select(value, who) %>% 
+  jgt(., by = "who", add.p = TRUE, spanner.size = 4, spanner.text = "Album picked by")
+```
+
+### Standardized
+```{r}
+mad_sheet %>% select(ends_with("_st"), who) %>% 
+  pivot_longer(., -c("who"), values_drop_na = TRUE) %>% select(value, who) %>% 
+  jgt(., by = "who", add.p = TRUE, spanner.size = 4, spanner.text = "Album picked by")
+```
+
+:::
+## Average rating by genre
+```{r}
+mad_sheet %>% select(Charlie:Tyler, g2) %>% 
+  pivot_longer(., -c("g2"), values_drop_na = TRUE) %>% select(value, g2) %>% 
+  jgt(., by = "g2", add.p = TRUE, spanner.size = 5, spanner.text = "Genre")
+```
+
+## Correlation among raters
+```{r}
+testRes <- corrplot::cor.mtest(mad_sheet %>% select(Charlie:Tyler) %>% na.omit() , conf.level = 0.95)
+corrplot::corrplot(mad_sheet %>% select(Charlie:Tyler) %>% na.omit() %>% cor(), 
+                   diag = FALSE, type = "lower", addCoef.col = "black", method = "color")
+```
+
+```{r}
+mad_sheet %>% select(Charlie:Tyler) %>% na.omit() %>% 
+  GGally::ggpairs(.,lower = list(continuous = "smooth", 
+                                 wrap_fn_with_param_arg = c(method = "loess", fill = "blue"))) 
+```
+
+### Correlation with All Music ratings
+```{r}
+testRes <- corrplot::cor.mtest(mad_sheet %>% select(Charlie:Tyler, all_music) %>% na.omit() , conf.level = 0.95)
+corrplot::corrplot(mad_sheet %>% select(Charlie:Tyler, all_music) %>% na.omit() %>% cor(), 
+                   diag = FALSE, type = "lower", addCoef.col = "black", method = "color")
+```
+
+### Correlation with Rate Your Music ratings
+```{r}
+testRes <- corrplot::cor.mtest(mad_sheet %>% select(Charlie:Tyler, rym) %>% na.omit() , conf.level = 0.95)
+corrplot::corrplot(mad_sheet %>% select(Charlie:Tyler, rym) %>% na.omit() %>% cor(), 
+                   diag = FALSE, type = "lower", addCoef.col = "black", method = "color")
+```
+
+## Person vs. group
+
+:::panel-tabset
+
+### Charlie
+```{r }
+#| fig-width: 7.5
+#| fig-height: 7
+mad_sheet %<>% mutate(t_minus_chuck = ((total - Charlie)/3)) %>% 
+  mutate(t_minus_josh = (total - Josh)/3) %>% 
+  mutate(t_minus_just = (total - Justin)/3) %>% 
+  mutate(t_minus_tyler = (total - Tyler)/3)
+
+ggplotly(mad_sheet %>% 
+  ggplot(., aes(x = Charlie, y = t_minus_chuck, colour= who, text = album)) +geom_point() +
+  geom_abline(intercept = c(0,0), slope = 1)+
+  geom_abline(intercept = c(0,1), slope = 1, linetype = 2) +
+  geom_abline(intercept = c(0,-1), slope = 1, linetype = 2 )+
+  geom_abline(intercept = c(0,2), slope = 1, linetype = 3) +
+  geom_abline(intercept = c(0,-2), slope = 1, linetype = 3))
+
+mad_sheet %>% select(Charlie, t_minus_chuck) %>% na.omit() %$% 
+cor(Charlie, t_minus_chuck)
+
+mad_sheet %>% select(album,Charlie, t_minus_chuck) %>% 
+  pivot_longer(., -1) %>% mutate(name = ifelse(grepl("minus", name), "Others", "Self")) %>% 
+  select(name, value) %>% jgt(., by = "name", add.p = TRUE)
+```
+
+### Josh
+```{r }
+#| fig-width: 7.5
+#| fig-height: 7
+
+
+ggplotly(mad_sheet %>% 
+  ggplot(., aes(x = Josh, y = t_minus_josh, colour= who, text = album)) +geom_point() +
+  geom_abline(intercept = c(0,0), slope = 1, linetype = 1) +
+  geom_abline(intercept = c(0,1), slope = 1, linetype = 2) +
+  geom_abline(intercept = c(0,-1), slope = 1, linetype = 2 )+
+  geom_abline(intercept = c(0,2), slope = 1, linetype = 3) +
+  geom_abline(intercept = c(0,-2), slope = 1, linetype = 3)+ 
+    coord_cartesian(xlim = c(1,9), ylim = c(1,9)))
+
+mad_sheet %>% select(Josh, t_minus_josh) %>% na.omit() %$% 
+cor(Josh, t_minus_josh)
+
+mad_sheet %>% select(album,Josh, t_minus_josh) %>% 
+  pivot_longer(., -1) %>% mutate(name = ifelse(grepl("minus", name), "Others", "Self")) %>% 
+  select(name, value) %>% jgt(., by = "name", add.p = TRUE)
+```
+
+### Justin
+```{r }
+#| fig-width: 7.5
+#| fig-height: 7
+
+
+ggplotly(mad_sheet %>% 
+  ggplot(., aes(x = Justin, y = t_minus_just, colour= who, text = album)) +geom_point() +
+  geom_abline(intercept = c(0,0), slope = 1)+
+  geom_abline(intercept = c(0,1), slope = 1, linetype = 2) +
+  geom_abline(intercept = c(0,-1), slope = 1, linetype = 2 )+
+  geom_abline(intercept = c(0,2), slope = 1, linetype = 3) +
+  geom_abline(intercept = c(0,-2), slope = 1, linetype = 3) + 
+    coord_cartesian(xlim = c(1,9), ylim = c(1,9)))
+
+mad_sheet %>% select(Justin, t_minus_just) %>% na.omit() %$% 
+cor(Justin, t_minus_just)
+
+mad_sheet %>% select(album,Justin, t_minus_just) %>% 
+  pivot_longer(., -1) %>% mutate(name = ifelse(grepl("minus", name), "Others", "Self")) %>% 
+  select(name, value) %>% jgt(., by = "name", add.p = TRUE)
+```
+
+### Tyler
+```{r }
+#| fig-width: 7.5
+#| fig-height: 7
+
+
+ggplotly(mad_sheet  %>% 
+  ggplot(., aes(x = Tyler, y = t_minus_tyler, colour= who, text = album)) +geom_point() +
+  geom_abline(intercept = c(0,0), slope = 1)+
+  geom_abline(intercept = c(0,1), slope = 1, linetype = 2) +
+  geom_abline(intercept = c(0,-1), slope = 1, linetype = 2 )+
+  geom_abline(intercept = c(0,2), slope = 1, linetype = 3) +
+  geom_abline(intercept = c(0,-2), slope = 1, linetype = 3)+ 
+    coord_cartesian(xlim = c(1,9), ylim = c(1,9)))
+
+mad_sheet %>% select(Tyler, t_minus_tyler) %>% na.omit() %$% 
+cor(Tyler, t_minus_tyler)
+```
+
+```{r}
+mad_sheet %>% select(album,Tyler, t_minus_tyler) %>% 
+  pivot_longer(., -1) %>% mutate(name = ifelse(grepl("minus", name), "Others", "Self")) %>% 
+  select(name, value) %>% jgt(., by = "name", add.p = TRUE)
+```
+
+:::
+
+## Distribution of ratings by album chooser
+```{r}
+mad_sheet %>% select(Charlie:Tyler, who) %>% 
+  pivot_longer(., -c("who"), values_drop_na = TRUE) %>% select(value, who) %>% 
+  ggplot(., aes(x = value, group = who, colour = who))+ geom_density() + 
+  labs(title = "Album ratings", colour = "Album picked by") + theme_minimal()
+```
+
+## Distribution of ratings by album rater
+```{r}
+mad_sheet %>% select(Charlie:Tyler, who) %>% 
+  pivot_longer(., -c("who"), values_drop_na = TRUE) %>% select(value, name) %>% 
+  ggplot(., aes(x = value, group = name, colour = name))+ geom_density() + 
+  labs(title = "Ratings by person", colour = "Person rating")+ theme_minimal()
+```
+
+## Album length impact on ratings
+```{r}
+mad_sheet %>% select(length, g2, Charlie:Tyler) %>% pivot_longer(., -c(1:2), values_drop_na = TRUE) %>% 
+ggplot(., aes(x = length, y = value, colour = name, group = name)) + geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+ theme_minimal()
+```
+
+## Album length impact on ratings by genre
+```{r}
+mad_sheet %>% select(length, g2, Charlie:Tyler) %>% pivot_longer(., -c(1:2), values_drop_na = TRUE) %>% 
+ggplot(., aes(x = length, y = value, colour = g2, group = g2)) + geom_point() +geom_smooth(method = "lm", se = FALSE)+ theme_minimal()
+```
+
+## Popularity impact on ratings
+```{r}
+mad_sheet %>% select(popularity, g2, Charlie:Tyler) %>% pivot_longer(., -c(1:2), values_drop_na = TRUE) %>% 
+ggplot(., aes(x = popularity, y = value, colour = name, group = name)) + geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+ theme_minimal()
+```
+
+
+## Popularity impact on ratings by genre
+```{r}
+mad_sheet %>% select(popularity, g2, Charlie:Tyler) %>% pivot_longer(., -c(1:2), values_drop_na = TRUE) %>% 
+ggplot(., aes(x = popularity, y = value, colour = g2, group = g2)) + geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+ theme_minimal()
+```
+
+## Album year impact on ratings
+```{r}
+mad_sheet %>% select(year, g2, Charlie:Tyler) %>% pivot_longer(., -c(1:2), values_drop_na = TRUE) %>% 
+ggplot(., aes(x = year, y = value, colour = name, group = name)) + geom_point() +
+  geom_smooth(method = "lm", se = FALSE)+ theme_minimal()
+```
+
+## Album year impact on ratings by genre
+```{r}
+mad_sheet %>% select(year, g2, Charlie:Tyler) %>% pivot_longer(., -c(1:2), values_drop_na = TRUE) %>% 
+ggplot(., aes(x = year, y = value, colour = g2, group = g2)) + geom_point() +geom_smooth(method = "lm", se = FALSE)+ theme_minimal()
+```
+
+## Ratings by album
+```{r}
+mad_sheet %>% select(album, who, Charlie:Tyler) %>% na.omit() %>% pivot_longer(., -c(1:2)) %>% 
+  group_by(album) %>% mutate(mean = mean(value), sd = sd(value)) %>% 
+  ungroup() %>% 
+  mutate(album = fct_reorder(album, mean, max)) %>% 
+  ggplot(., aes(x = value, y = album, colour = name)) +geom_point() +theme_minimal()
+```
+
+## Average ratings by album
+```{r}
+mad_sheet %>% select(album, who, Charlie:Tyler) %>% na.omit() %>% pivot_longer(., -c(1:2)) %>% 
+  group_by(album) %>% mutate(mean = mean(value), sd = sd(value)) %>% 
+  ungroup() %>% 
+  mutate(album = fct_reorder(album, mean, max)) %>% 
+  select(who, album, mean, sd) %>% distinct() %>% 
+  ggplot(., aes(x = mean, y = album, colour = who)) +
+  geom_point() +theme_minimal() + geom_errorbarh(aes(xmin = mean-sd, xmax = mean+sd, height = .01))
+```
+
+```{r}
+mad_sheet %>% select(album, who, ends_with("_st")) %>% na.omit() %>% pivot_longer(., -c(1:2)) %>% 
+  group_by(album) %>% mutate(mean = mean(value), sd = sd(value)) %>% 
+  ungroup() %>% 
+  mutate(album = fct_reorder(album, mean, max)) %>% 
+  select(who, album, mean, sd) %>% distinct() %>% 
+  ggplot(., aes(x = mean, y = album, colour = who)) +
+  geom_point() +theme_minimal() + geom_errorbarh(aes(xmin = mean-sd, xmax = mean+sd, height = .01))
+```
+
+## Average rating by standard deviation
+
+```{r}
+ggplotly(mad_sheet %>% select(artist, album, who, Charlie:Tyler) %>% na.omit() %>% pivot_longer(., -c(1:3)) %>% 
+  group_by(album) %>% mutate(mean = mean(value), sd = sd(value)) %>% 
+  select(artist, album, mean, sd, who) %>% distinct() %>% 
+    mutate(text = paste(artist, album, sep = "\n")) %>% 
+  ggplot(., aes(x = mean, y = sd, colour = who, text = text)) + geom_point() +theme_minimal())
+```
+
+
+# Songs
+```{r}
+
+mad_songs %>% select(a1, album, track_name, y2, duration__ms_, popularity, genres:time_signature) %>% j.reactable()
+
+```
+
+
+```{r}
+#| eval: false
+
+
+# fa <- data.frame(aa = list.files("jpeg")) %>% mutate(replace = gsub(".jpeg", ".png", aa))
+# 
+# for(i in 1:nrow(fa)){
+#     img <- jpeg::readJPEG(paste0("jpeg/", fa$aa[i]))
+#     Xx <- file.path("png/", fa$replace[i])
+#     writePNG(img, Xx)
+# }
+
+
+
+# quarto publish quarto-pub madness.qmd
+
+```
+
+
+
+# Regression
+```{r}
+
+
+
+
+
+
+dd <- datadist(mad_sheet); options(datadist='dd')
+
+jm <- ols(Josh ~ who + g2 + length + year, data = mad_sheet %>% mutate(who = relevel(factor(who), "Josh")) )
+cm <- ols(Charlie ~ who + g2 + length + year, data = mad_sheet %>% mutate(who = relevel(factor(who), "Chuck")) )
+tm <- ols(Tyler ~ who + g2 + length + year, data = mad_sheet %>% mutate(who = relevel(factor(who), "Tyler")) )
+jmm <- ols(Justin ~ who + g2 + length + year, data = mad_sheet %>% mutate(who = relevel(factor(who), "Justin")) )
+
+
+
+trib.cols.rms <- tribble(~term, ~new, ~level, ~label,
+             'who', 'Album picked by', '1', 'Album picked by',
+             'g2', 'Genre', '2', 'Genre',
+             'length', 'Length', '3', 'Length',
+             'year', 'Year', '4', 'Year',
+             'Charlie', 'Charlie', '5', 'Charlie',
+             'Justin', 'Justin', '6', 'Justin',
+             'Tyler', 'Tyler', '7', 'Tyler',
+             'Josh', 'Josh', '8', 'Josh')
+
+require(tibble)
+prr <- rbind(
+rms.sum.table3(summary(jm, year = c(1985, 2005), length = c(40, 60), who = "Josh"), 
+               trib.cols.rms, anova(jm), raw = TRUE) %>% mutate(X = "Josh"),
+rms.sum.table3(summary(cm, year = c(1985, 2005), length = c(40, 60), who = "Chuck"),
+               trib.cols.rms, anova(cm), raw = TRUE) %>% mutate(X = "Chuck"),
+rms.sum.table3(summary(tm, year = c(1985, 2005), length = c(40, 60), who = "Tyler"), 
+               trib.cols.rms, anova(tm), raw = TRUE) %>% mutate(X = "Tyler"),
+rms.sum.table3(summary(jmm, year = c(1985, 2005), length = c(40, 60), who = "Justin"), 
+               trib.cols.rms, anova(jmm), raw = TRUE) %>% mutate(X = "Justin")) %>% 
+  mutate(p = ifelse(term == "who", highc, axis)) %>% 
+  mutate(f = if_else(term == "who", label, facet))
+
+prr %>%
+             select(X, label, levels, effect, conf.low, conf.high, any_of(c('d.f.', 'P'))) %>% 
+             mutate(across(where(is.numeric), ~round(.x, 3))) %>% 
+  group_by(X) %>% 
+             jgtt(.)
+
+prr%>% mutate(across(where(is.numeric), as.numeric)) %>% 
+    ggplot(., aes(x = effect, y = p, colour = X)) + geom_point(position = ggstance::position_dodgev(height = .55)) + 
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0, position = ggstance::position_dodgev(height = .55)) +
+    theme_classic() + 
+    geom_vline(xintercept = 0, linetype = 2) + 
+    labs(x = "Estimate", y = NULL, colour = element_blank()) +
+    facet_grid(f~., scales = "free_y", switch = "y", space = "free")+
+    theme(strip.text.y.left = element_text(angle = 0))+
+    theme(strip.background  = element_blank()) +
+    theme(panel.spacing.y = unit(0,"line")) +
+    theme(strip.placement = 'outside') +
+    theme(panel.grid.major.x = element_line(colour = "gray90"),
+          panel.grid.minor.x = element_line(colour = "gray95",
+                                            size = 0.3),
+          plot.background = element_rect(fill = "white", size = 1.3)) 
+```
+
+```{r}
+jx <- ols(Josh ~ Charlie +Justin +Tyler +who, data = mad_sheet %>% mutate(who = relevel(factor(who), "Josh")) )
+cx <- ols(Charlie ~ Josh +Justin +Tyler +who, data = mad_sheet %>% mutate(who = relevel(factor(who), "Chuck")) )
+tx <- ols(Tyler ~ Charlie +Josh +Justin +who, data = mad_sheet %>% mutate(who = relevel(factor(who), "Tyler")) )
+mx <- ols(Justin ~ Josh +Charlie +Tyler +who, data = mad_sheet %>% mutate(who = relevel(factor(who), "Justin")) )
+
+pxx <- rbind(
+rms.sum.table3(summary(jx, who = "Josh", Charlie = c(5,6), Tyler = c(5, 6), Justin = c(5, 6)), 
+               trib.cols.rms, anova(jx), raw = TRUE) %>% mutate(X = "Josh"),
+rms.sum.table3(summary(cx, who = "Chuck", Josh = c(5,6), Tyler = c(5, 6), Justin = c(5, 6)),
+               trib.cols.rms, anova(cx), raw = TRUE) %>% mutate(X = "Chuck"),
+rms.sum.table3(summary(tx, who = "Tyler", Charlie = c(5,6), Josh = c(5,6), Justin = c(5, 6)), 
+               trib.cols.rms, anova(tx), raw = TRUE) %>% mutate(X = "Tyler"),
+rms.sum.table3(summary(mx, who = "Justin", Charlie = c(5,6), Josh = c(5,6), Tyler = c(5, 6)), 
+               trib.cols.rms, anova(mx), raw = TRUE) %>% mutate(X = "Justin")) %>% 
+  mutate(p = ifelse(term == "who", highc, axis)) %>% 
+  mutate(f = if_else(term == "who", label, facet))
+
+pxx %>%
+             select(X, label, levels, effect, conf.low, conf.high, any_of(c('d.f.', 'P'))) %>% 
+             mutate(across(where(is.numeric), ~round(.x, 3))) %>% 
+  group_by(X) %>% 
+             jgtt(.)
+
+pxx%>% mutate(across(where(is.numeric), as.numeric)) %>% 
+    ggplot(., aes(x = effect, y = p, colour = X)) + geom_point(position = ggstance::position_dodgev(height = .55)) + 
+    geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0, position = ggstance::position_dodgev(height = .55)) +
+    theme_classic() + 
+    geom_vline(xintercept = 0, linetype = 2) + 
+    labs(x = "Estimate", y = NULL, colour = element_blank()) +
+    facet_grid(f~., scales = "free_y", switch = "y", space = "free")+
+    theme(strip.text.y.left = element_text(angle = 0))+
+    theme(strip.background  = element_blank()) +
+    theme(panel.spacing.y = unit(0,"line")) +
+    theme(strip.placement = 'outside') +
+    theme(panel.grid.major.x = element_line(colour = "gray90"),
+          panel.grid.minor.x = element_line(colour = "gray95",
+                                            size = 0.3),
+          plot.background = element_rect(fill = "white", size = 1.3))
+```
+
+
+```{r}
+lrm(I(raw_rank_class=="Top 20ish") ~ who + g2 + popularity +length +order +rym, data = mad_sheet  )
+```
+
+# Exploratory
+
+```{r}
+#| eval: false
+
+require(RankAggreg)
+data("geneLists")
+
+top25CE <- RankAggreg(geneLists, 25, seed=100, rho=.01)
+
+mx <- ratings %>% select(1:5) %>% pivot_longer(., -1) %>% arrange(name, desc(value)) %>% 
+  group_by(name) %>% select(-value) %>% mutate(rank = 1:n()) %>% 
+  pivot_wider(., names_from = "rank", values_from = "album") %>% 
+  as.matrix()
+
+rownames(mx) <- mx[,1]
+mx <- mx[, -1]
+
+
+top20 <- RankAggreg(mx, nrow(ratings), seed=100, rho=.01, verbose = FALSE)
+rank_agg <- data.frame(album = top20$top.list) %>% mutate(rank_agg = 1:n())
+
+# topxx <- RankAggreg(mx[,1:20], 20, seed=100, rho=.01, verbose = FALSE)
+
+mk <- read_sheet("1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 schedule") %>%
+  mutate(Date = ymd(Date)) %>% filter(Date == ymd("2024.3.25")) %>% 
+  select(album, Charlie:Tyler)%>% pivot_longer(., -1) %>% arrange(name, desc(value)) %>% 
+  group_by(name) %>% select(-value) %>% mutate(rank = 1:n()) %>% 
+  pivot_wider(., names_from = "rank", values_from = "album") %>% 
+  as.matrix()
+
+rownames(mk) <- mk[,1]
+mk <- mk[, -1]
+
+ra <- RankAggreg(mk, 5, seed=100, verbose = FALSE)
+
+ra$summary
+
+mg <- m1%>% arrange(name, desc(value)) %>% 
+  group_by(name) %>% select(-value, -Date) %>% mutate(rank = 1:n()) %>% 
+  pivot_wider(., names_from = "rank", values_from = "album") %>% select(-id) %>% 
+  as.matrix()
+
+rownames(mg) <- mg[,1]
+mg <- mg[, -1]
+
+RankAggreg(mg, 10, seed=100, verbose = FALSE)
+```
+
+
+```{r}
+# mx <- read_sheet("1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 schedule") %>%
+#   mutate(Date = ymd(Date)) %>% filter(Date == ymd("2024.4.07")) %>% 
+#   select(album, Charlie:Tyler) %>% pivot_longer(., -1)
+
+# mxi <- mx %>% filter(name == "Josh") %>% arrange(desc(value)) %>% pull(album)
+# 
+# aa <- data.frame()
+# for(i in 1:(length(mxi)-1)){
+#   if(i ==1) aa <- mxi[i] %>>% mxi[i+1]
+#   else aa <- aa %>>%  mxi[i+1]
+# }
+# 
+# 
+# aa %>% arrange(item2) %>% distinct()
+# "Invincible Shield" %>>% "Alvvays"%>>% "Speaking in Tounges" %>>%"Pretenders"%>>% "Mos Def & Talib Kweli Are Black Star"
+# 
+# bind_rows(aa %>% mutate(row1_winner =1, row2_winner = 0),
+# data.frame(item = aa$item2, item2 = aa$item) %>% mutate(row1_winner =0, row2_winner = 1)) %>% 
+#   distinct() 
+# 
+
+`%>>%` <- function(a, b){
+  if(!is.data.frame(a)){
+  RE <- data.frame(item = a, item2 = b)
+  }else{ 
+   nr <- nrow(a) + 1
+    RE <- bind_rows(a, data.frame(item = c(a$item, a$item2[nrow(a)]), item2 = rep(b, nr))) %>% distinct()
+  }
+  
+  return(RE)
+} 
+
+contest_fun <- function(NAME){
+mxc <- mx %>% filter(name == NAME) %>% arrange(desc(value)) %>% pull(album)
+
+bb <- data.frame()
+for(i in 1:(length(mxc)-1)){
+  if(i ==1) bb <- mxc[i] %>>% mxc[i+1]
+  else bb <- bb %>>%  mxc[i+1]
+  
+}
+egg <- expand.grid(item = unique(c(bb$item, bb$item2)), item2 = unique(c(bb$item, bb$item2)))
+
+  bb %<>% arrange(item2) %>% distinct() %>% mutate(x = 1) %>% 
+  full_join(., egg, by = c("item", "item2")) %>% 
+  mutate(x = replace_na(x, 0))
+
+return(bb)
+}
+
+require(BradleyTerry2)
+# dgg <- map(unique(mx$name), contest_fun) %>% list_rbind() %>% 
+#   group_by(item, item2) %>% summarise(x = sum(x)) %>% 
+#   pivot_wider(., names_from = "item2", values_from = "x")
+# 
+# 
+# bbb <- map(unique(mx$name), contest_fun) %>% list_rbind() %>% filter(x ==1) %>% select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
+# 
+# BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", data = bbb)
+```
+
+```{r}
+## THis might work!
+
+
+
+contest_fun2 <- function(dat){
+    cc <- data_frame()  
+    
+    IDs <- unique(dat$id)
+    
+    for(j in 1:length(IDs)){
+    
+        mxc <- dat %>% filter(id == IDs[j]) %>% arrange(desc(value)) %>% pull(album)
+        
+        bb <- data.frame()
+        for(i in 1:(length(mxc)-1)){
+              if(i ==1) bb <- mxc[i] %>>% mxc[i+1]
+              else bb <- bb %>>%  mxc[i+1]
+              
+            }
+        egg <- expand.grid(item = unique(c(bb$item, bb$item2)), item2 = unique(c(bb$item, bb$item2)))
+        
+          bb %<>% arrange(item2) %>% distinct() %>% mutate(x = 1) %>% 
+          full_join(., egg, by = c("item", "item2")) %>% 
+          mutate(x = replace_na(x, 0))
+         
+          cc <- bind_rows(cc, bb)
+    }
+    
+     return(cc)
+}
+
+
+
+
+# 
+# data.frame(coef = round(btmod$coefficients, 2)) %>% arrange(desc(coef))
+# 
+# summary(btmod)
+wl <- bind_rows(contest_fun2(mr)%>% filter(x ==1),
+          contest_fun2(m1)%>% filter(x ==1))
+
+full_join(contest_fun2(mr)%>% filter(x ==1) %>% count(item, name = "win"), 
+contest_fun2(mr)%>% filter(x ==1) %>% count(item2, name = "loss"), by = c("item" = "item2")) %>%
+  mutate(matches = win +loss, pct = round(win/matches, 3)) %>% 
+  arrange(desc(pct)) %>% 
+  left_join(., 
+            BTabilities(btmod_p) %>% data.frame() %>% arrange(desc(ability)) %>% tibble::rownames_to_column("item") %>% select(1,2), by= "item") %>% 
+  mutate(ability = round(ability, 3)) %>% arrange(desc(ability)) %>% mutate(a_rank = 1:n()) %>% 
+  arrange(desc(pct)) %>% mutate(wl_rank = 1:n()) %>% 
+  j.reactable()
+
+```
+
+
+```{r}
+sw16 <- c("Recipe for Hate", "Alvvays", "The Great War", "Australia Stops")
+## Brackets
+mr <- read_sheet("1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 schedule") %>%
+  mutate(Date = ymd(Date)) %>% filter(Date <= ymd("2024.04.26") &Date >=ymd("2024.03.25") )%>% 
+  select(Date, album, Charlie:Tyler)%>% pivot_longer(., -c(1:2)) %>% 
+  arrange(Date, name,desc(value)) %>% group_by(Date,name) %>% mutate(id = cur_group_id())
+
+fff <- contest_fun2(mr)%>% filter(x ==1) %>% 
+  select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
+
+## Round Robin
+m1 <- read_sheet("1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 schedule") %>%
+  mutate(Date = ymd(Date)) %>% filter(Round == "Round Robin", 
+                                      album %in% unique(c(ac(fff$player1), ac(fff$player2)))) %>% 
+  select(Date, album, Charlie:Tyler)%>% pivot_longer(., -c(1:2)) %>% 
+  arrange(Date, name,desc(value)) %>% group_by(name) %>% mutate(id = cur_group_id())
+
+rrr <- contest_fun2(m1)%>% filter(x ==1) %>% 
+  select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
+
+
+
+
+eee <- bind_rows(contest_fun2(mr)%>% filter(x ==1),
+          contest_fun2(m1)%>% filter(x ==1)) %>% 
+  select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
+
+btmod_p <- BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", 
+               data = fff, refcat = "Raw Power")
+
+btmod <- BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", 
+             data = eee, refcat = "Raw Power")
+
+btmod_rr <- BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", 
+                data = rrr, refcat = "Raw Power")
+
+brackets <- broom::tidy(btmod_p, conf.int = TRUE, exp = TRUE) %>% arrange(estimate) %>% 
+  mutate(term = gsub("player", "", term), term = fct_inorder(term)) %>% mutate(when = "brackets")
+
+robin <- broom::tidy(btmod_rr, conf.int = TRUE, exp = TRUE) %>% arrange(estimate) %>% 
+  mutate(term = gsub("player", "", term), term = fct_inorder(term))  %>% mutate(when = "round robin")
+
+combinet <- broom::tidy(btmod, conf.int = TRUE, exp = TRUE) %>% arrange(estimate) %>% 
+  mutate(term = gsub("player", "", term), term = fct_inorder(term))  %>% mutate(when = "combined")
+
+bind_rows(combinet, brackets, robin) %>% filter(term %in% sw16) %>% 
+  ggplot(., aes(x = estimate, y = term, colour = when)) +
+    geom_point() 
+
+  ggplot(combinet, aes(x = estimate, y = term)) +
+    geom_point() + geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0) +
+    geom_vline(xintercept = 1, linetype = 3) +
+  scale_x_continuous(trans='log', breaks = c(0.25, 0.5, 1, 2, 4, 8))
+
+brackets %>% left_join(., mad_sheet %>% select(term = album, who), by = "term") %>% 
+  mutate(who = replace_na(who, "Sisqo")) %>% mutate(term = fct_reorder(term, estimate, max)) %>% 
+  filter(term != "Solid Gold") %>% 
+  ggplot(., aes(x = estimate, y = term, colour = who)) +
+    geom_point() + geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0) +
+    geom_vline(xintercept = 1, linetype = 3) +
+  scale_x_continuous(trans='log', breaks = c(0.25, 0.5, 1, 2, 4, 8))
+
+
+# brackets %>% left_join(., mad_sheet %>% select(term = album, who), by = "term") %>% 
+#   mutate(who = replace_na(who, "Sisqo")) %>% 
+#   mutate(term = fct_reorder(term, estimate, max),
+#          who = fct_relevel(who, "Justin")) %>% 
+#   orm(estimate ~ who, data = .)
+
+
+
+wl <- bind_rows(contest_fun2(mr)%>% filter(x ==1),
+          contest_fun2(m1)%>% filter(x ==1))
+
+full_join(wl %>% count(item, name = "win"), 
+wl %>% count(item2, name = "loss"), by = c("item" = "item2")) %>%
+  mutate(matches = win +loss, pct = round(win/matches, 4)) %>% 
+  arrange(desc(pct)) %>% 
+  left_join(., 
+            BTabilities(btmod) %>% data.frame() %>% arrange(desc(ability)) %>% tibble::rownames_to_column("item") %>% select(1,2), by= "item") %>% 
+  mutate(ability = round(exp(ability), 4)) %>% arrange(desc(ability)) %>% mutate(a_rank = 1:n()) %>% 
+  arrange(desc(pct)) %>% mutate(wl_rank = 1:n()) %>% 
+  j.reactable()
+
+BTabilities(btmod_p) %>% data.frame() %>% arrange(desc(ability)) %>% tibble::rownames_to_column("item") %>% select(1,2)
+
+```
+
+
+```{r}
+# alvv, rp, sna, mb
+# alvv, rp, sna, mb
+
+data(baseball)
+##  Simple Bradley-Terry model, ignoring home advantage:
+baseballModel1 <- BTm(cbind(home.wins, away.wins), home.team, away.team,
+                      data = baseball, id = "team")
+
+##  Now incorporate the "home advantage" effect
+baseball$home.team <- data.frame(team = baseball$home.team, at.home = 1)
+baseball$away.team <- data.frame(team = baseball$away.team, at.home = 0)
+baseballModel2 <- update(baseballModel1, formula = ~ team + at.home)
+
+##  Compare the fit of these two models:
+anova(baseballModel1, baseballModel2)
+
+
+```
+
+
+
+
+
+
+```{r}
+#| eval: false
+
+
+# devtools::install_github("ds-elections/rcv")
+require(rcv)
+
+mx <- read_sheet("1UYGzX2raigszjKffPPKf3oZZjVkU61c27Ppatkdm0so", sheet = "2024 schedule") %>%
+  mutate(Date = ymd(Date)) %>% filter(Date == ymd("2024.4.03")) %>% 
+  select(album, Charlie:Tyler) %>% pivot_longer(., -1) %>% 
+  rename(candidate = album, pref_voter_id = name, vote_rank = value) %>% 
+  mutate(contest = "x", vote_rank = 6-vote_rank) 
+
+expand_grid(mx, z = c(1:5)) %>% arrange(z, pref_voter_id) %>% 
+  mutate(pref_voter_id = paste0(pref_voter_id, z)) %>% 
+  rcv::rcv_tally(.)
+
+xrr <- rcv_tally(cambridge_clean, rules = "stv", n_winners = 4 )
+
+xrr <- rcv_tally(sf_bos_clean, "Board of Supervisors, District 1")
+knitr::kable(xrr)
+
+d3_7 <- rcv::make_d3list(results = xrr)
+networkD3::sankeyNetwork(Links = d3_7$values, Nodes = d3_7$names,
+                         Source = "source", Target = "target",
+                         Value = "value", NodeID = "candidate", units = "voters",
+                         fontSize = 12, nodeWidth = 20)
+
+# devtools::install_github("viva-ronaldo/avr")
+require(avr)
+
+
+map <- c("a", "b", "c", "d")
+votes <- list(
+  ballot(1, 2, 3, 4, map = map),
+  ballot(1, 2, 3, 4, map = map),
+  ballot(1, 2, 4, 3, map = map),
+  ballot(2, 1, 3, 4, map = map),
+  ballot(2, 1, 3, 4, map = map),
+  ballot(2, 3, 1, 4, map = map),
+  ballot(3, 2, 1, 4, map = map),
+  ballot(3, 4, 2, 1, map = map),
+  ballot(2, 3, 4, 1, map = map)
+)
+
+stv(votes, 2)
+
+ddl <- mx %>% pivot_wider(names_from = candidate, values_from = vote_rank) %>% select(-c(1:2)) %>% 
+  bind_rows(.,.,.,.,.,.,.,.,.,.,.,.) %>% 
+  stv(., nseats = 3, getMatrix = TRUE, verbose = TRUE)
+
+str(ddl)
+
+ddl$count_table
+```
+
+
+

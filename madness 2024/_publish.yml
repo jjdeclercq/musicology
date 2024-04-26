@@ -1,0 +1,4 @@
+- source: madness.qmd
+  quarto-pub:
+    - id: af505f1a-0bb9-4dff-946d-1a01bc502755
+      url: 'https://jjdeclercq.quarto.pub/madness-2024'

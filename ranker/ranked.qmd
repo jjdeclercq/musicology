@@ -1,0 +1,205 @@
+---
+title: "Ranked"
+author:
+- Josh DeClercq
+date: today
+format:
+  html:
+    grid: 
+      body-width: 1250px
+      sidebar-width: 250px
+      margin-width: 200px
+    toc: true
+    mainfont: albertus
+    theme: flatly
+toc-location: left
+toc-depth: 3
+execute:
+  echo: true
+  eval: true
+  warning: false
+number-sections: true
+monobackgroundcolor: "#BADBCB"
+code-fold: true
+code-block-bg: true
+code-block-border-left: "#31BAE9"
+callout-appearance: minimal
+self-contained: true
+---
+
+```{r setup, include=FALSE}
+## load packages
+library(Hmisc)
+library(dplyr)
+library(magrittr)
+library(knitr)
+library(forcats)
+library(tableone)
+library(kableExtra)
+require(lubridate)
+require(tidyr)
+require(gt)
+require(gtsummary)
+require(rms)
+require(UpSetR)
+require(stringr)
+require(reactable)
+require(htmltools)
+require(reactablefmtr)
+require(naniar)
+require(ggplot2)
+require(readxl)
+require(googlesheets4)
+require(stringi)
+require(plotly)
+library(png)
+library(htmltools)
+require(BradleyTerry2)
+
+devtools::source_url("https://raw.githubusercontent.com/jjdeclercq/Jmisc/main/Jmisc.R")
+devtools::source_url("https://raw.githubusercontent.com/jjdeclercq/VUMisC/main/JDmisc.R")
+
+
+
+`%>>%` <- function(a, b){
+  if(!is.data.frame(a)){
+  RE <- data.frame(item = a, item2 = b)
+  }else{ 
+   nr <- nrow(a) + 1
+    RE <- bind_rows(a, data.frame(item = c(a$item, a$item2[nrow(a)]), item2 = rep(b, nr))) %>% distinct()
+  }
+  
+  return(RE)
+} 
+
+
+
+
+contest_fun2 <- function(dat){
+    cc <- data_frame()  
+    
+    IDs <- unique(dat$id)
+    
+    for(j in 1:length(IDs)){
+    
+        mxc <- dat %>% filter(id == IDs[j]) %>% arrange(desc(value)) %>% pull(album)
+        
+        bb <- data.frame()
+        for(i in 1:(length(mxc)-1)){
+              if(i ==1) bb <- mxc[i] %>>% mxc[i+1]
+              else bb <- bb %>>%  mxc[i+1]
+              
+            }
+        egg <- expand.grid(item = unique(c(bb$item, bb$item2)), item2 = unique(c(bb$item, bb$item2)))
+        
+          bb %<>% arrange(item2) %>% distinct() %>% mutate(x = 1) %>% 
+          full_join(., egg, by = c("item", "item2")) %>% 
+          mutate(x = replace_na(x, 0))
+         
+          cc <- bind_rows(cc, bb)
+    }
+    
+     return(cc)
+}
+
+```
+
+```{r}
+## Refresh app
+
+#| eval: false
+
+rsconnect::deployApp("/Users/joshdeclercq/Documents/GitHub/musicology/ranker")
+```
+
+
+
+```{r}
+jp <-  read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order") 
+
+jpr <- jp %>%rename(id =trial, album = order) %>% group_by(id) %>% mutate(value = n():1)
+
+jjj <- contest_fun2(jpr) %>% filter(x ==1) %>% 
+  select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
+
+jpmod <- BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", refcat = "Firepower",
+             data = jjj )#%>% filter(player1 %nin% c("Painkiller", "Screaming for Vengeance")) %>% 
+               #filter(player2 %nin% c("Painkiller", "Screaming for Vengeance")))
+
+jp_wl <- contest_fun2(jpr)%>% filter(x ==1)
+
+rank_table <- full_join(jp_wl %>% count(item, name = "win"), 
+jp_wl %>% count(item2, name = "loss"), by = c("item" = "item2")) %>%
+  mutate(loss =replace_na(loss, 0),win =replace_na(win, 0), matches = win +loss, pct = round(win/matches, 4)) %>% 
+  left_join(., 
+            BTabilities(jpmod) %>% data.frame() %>% arrange(desc(ability)) %>% 
+              tibble::rownames_to_column("item") %>% select(1,2), by= "item") %>% 
+  mutate(ability = round(exp(ability), 4)) %>% arrange(desc(ability)) %>% mutate(a_rank = 1:n()) %>% 
+  arrange(desc(pct)) %>% mutate(wl_rank = 1:n()) %>% arrange(a_rank) 
+
+
+  j.reactable(rank_table %>% filter(matches >20))
+
+#   iii <- contest_fun2(jpr) %>% filter(x ==1) %>% 
+#   select(-x) %$% xtabs(~item +item2)
+#   
+# inspect<-  c("Sin After Sin", "Painkiller", "Firepower", "Screaming for Vengeance")
+# 
+# iii[inspect, inspect] %>% countsToBinomial()
+# 
+# list.files()
+  added_n %>% count(album) %>% filter(n >1)
+```
+
+
+```{r}
+yrmod <- BTabilities(jpmod) %>% data.frame() %>% arrange(desc(ability)) %>% 
+              tibble::rownames_to_column("item")  %>% 
+  left_join(., added_n, by = c("item" =  "album"))
+
+yrmod %>% group_by(Year) %>% slice(1:5)
+
+dd <- datadist(yrmod); options(datadist='dd')
+
+yrfit <-orm(ability ~ rcs(Year, 3), data = yrmod %>% group_by(Year) %>% slice(1:5))
+anova(yrfit)
+ggplot(Predict(yrfit))
+```
+
+
+```{r}
+jpjp <- broom::tidy(jpmod, conf.int = TRUE, exp = TRUE) %>% arrange(desc(estimate) ) %>% 
+  mutate(p.value = format.pval(p.value, digits = 3, eps = "<0.001"))
+
+
+  ggplot(jpjp %>% filter(p.value <0.9) %>% mutate(term = fct_reorder(term, estimate, max)), aes(x = estimate, y = term)) +
+    geom_point() + #geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0) +
+    geom_vline(xintercept = 1, linetype = 3) +
+  scale_x_continuous(trans='log', breaks = c(0.0125, 0.25, 1,  4,  16, 64))
+  
+# rsconnect::deployApp("/Users/joshdeclercq/Documents/GitHub/musicology/ranker")
+  
+  # jpa <- read.csv("../ranker/jp_albums.csv")
+  # 
+  # jpa %<>% left_join(., 
+  #                    jp %>% count(order),
+  #                   by = c("album" = "order")) %>% 
+  #   mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))))
+  # 
+  # sample_n(jpa, 5, weight = p)
+  
+
+```
+
+```{r}
+jp <- read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
+
+count(jpa, album) %>% filter(n >1)
+
+jp %>% filter(order %nin% c("Memorial", "Palomino")) %>% 
+  left_join(., jpa, by = c("order" = "album")) %>% 
+  select(-X, -Order) %>% rename(album = order) %>% 
+  mutate(order = paste(album, artist, Year, sep = "\n"))
+Sys.time()
+```
+
