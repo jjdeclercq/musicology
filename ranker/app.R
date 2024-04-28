@@ -8,6 +8,25 @@ require(reactablefmtr)
 require(googlesheets4)
 library(googledrive)
 
+gen_jp_labels <- function(dat){
+  TT <- list()
+  for(i in 1:nrow(dat)){
+    
+    TT[[i]] <- htmltools::div( htmltools::strong(dat$album[i]), 
+                               htmltools::br(),  
+                               dat$artist[i], 
+                               htmltools::br(),
+                               paste0("(", dat$Year[i], ")")
+                               )
+    
+    names(TT)[i] <- dat$order[i]
+    
+    
+  }
+  return(TT)
+}
+
+
 options(
   gargle_oauth_cache = ".secrets",
   gargle_oauth_email = TRUE
@@ -20,14 +39,18 @@ gs4_auth(
 )
 
 
-jpa <- read.csv("jp_albums.csv")
-# jp <- read.csv("jp.csv")
+jpa <- read.csv("jp_albums.csv") #%>% select(-Order) ## list of albums
+
 jp <- read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
 
+## add probs
 jpa %<>% left_join(., 
-                   jp %>% count(order),
-                   by = c("album" = "order")) %>% 
-  mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))))
+                  jp %>% count(order),
+                  by = c( "order")) %>% 
+  mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))), p = p^2) %>% 
+  mutate(order = gsub("\n", " ", order))
+
+
 
 
 ui <- fluidPage(
@@ -38,10 +61,11 @@ ui <- fluidPage(
         type = "tabs",
         tabPanel(
           "Default",
-          column(2, uiOutput("sortable")),
-          column(10, reactableOutput("jp_table")),
+          column(4, uiOutput("sortable")),
+          column(8, reactableOutput("jp_table")),
           actionButton("btnSubmit", label = "Submit rankings"),
-          actionButton("btnReset", label = "Reset albums")
+          actionButton("btnReset", label = "Reset albums"),
+          verbatimTextOutput("results_basic")
         )
 
     )
@@ -50,40 +74,48 @@ ui <- fluidPage(
 
 server <- function(input, output, session) {
   init_albums <- sample_n(jpa, 5, weight = p)
-  rv <- reactiveValues(order = init_albums$album, 
+  
+  rv <- reactiveValues(order = init_albums$order, 
                        albums = init_albums,
                        rankings = jp)
   
 
   output$jp_table <- renderReactable({
-    reactable(rv$albums)
+    reactable(rv$albums %>% select(-order))
   })
 
 
   observeEvent(input$rank_list_basic, {
     rv$order <- input$rank_list_basic
 
-    rv$albums <- left_join(data.frame(album = rv$order),
-                           rv$albums,
-                           by = "album")
+    rv$albums <- left_join(data.frame(order = rv$order),
+                           jpa,
+                           by = "order")
   })
 
   output$sortable <- renderUI({
     rank_list_basic <- rank_list(
       text = "Rank albums",
-      labels =  rv$albums$album,  
+      labels =  gen_jp_labels(rv$albums),
       input_id = "rank_list_basic"
     )
+  })
+  
+  output$results_basic <- renderPrint({
+    input$rank_list_basic # This matches the input_id of the rank list
   })
   
   
   observeEvent(input$btnSubmit, {
 
-    rv$rankings <- bind_rows(rv$rankings, data.frame(trial = (max(rv$rankings$trial) + 1), order = rv$albums$album))
+    new_rank_rows <- rv$albums %>% mutate(date = Sys.Date(), trial = max(rv$rankings$trial) + 1) %>% 
+      select(trial,date, album, artist, Year, order)
+    
+    rv$rankings <- rbind(rv$rankings,new_rank_rows )
     # write.csv(rv$rankings , "jp.csv", row.names = FALSE)
 
-    write_sheet(rv$rankings, "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
-    # sheet_append(data =rv$rankings, ss = "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
+    # write_sheet(rv$rankings, "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
+    sheet_append(data =new_rank_rows, ss = "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
 
      rv$albums <- sample_n(jpa, 5, weight = p)
     

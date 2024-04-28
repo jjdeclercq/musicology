@@ -1,290 +1,427 @@
-"","Order","artist","album","Year"
-"1",166,"Dio","The Last in Line",1984
-"2",582,"Margo Price","All American Made",2017
-"3",795,"Muse","Black Holes and Revelations",2006
-"4",207,"Blind Guardian","Tales From the Twilight World",1990
-"5",1251,"Lunar Shadow","The Smokeless Fires",2019
-"6",195,"Metallica","...And Justice For All",1988
-"7",732,"Teramaze","Flight of the Wounded",2022
-"8",392,"Clutch","From Beale Street to Oblivion",2007
-"9",459,"Mastodon","The Hunter",2011
-"10",510,"Benjamin Booker","Benjamin Booker",2014
-"11",703,"Gang of Youths","angel in realtime.",2022
-"12",593,"Steven Wilson","To the Bone",2017
-"13",316,"Lamb of God","As the Palaces Burn",2003
-"14",354,"Darkest Hour","Undoing Ruin",2005
-"15",377,"Amorphis","Eclipse",2006
-"16",503,"True Widow","Circumambulation",2013
-"17",2348,"As I Lay Dying","Shadows Are Security",2005
-"18",45,"Deep Purple","Stormbringer",1974
-"19",450,"40 Watt Sun","The Inside Room - EP",2011
-"20",2015,"Angra","Temple of Shadows",2004
-"21",2026,"Mushroomhead","XIII",2003
-"22",748,"Refused","The Shape Of Punk To Come",1998
-"23",475,"OSI","Fire Make Thunder",2012
-"24",324,"Slipknot","Vol. 3: The Subliminal Verses",2004
-"25",2237,"Primordial","How it Ends",2023
-"26",604,"Gunship","Dark All Day",2018
-"27",100,"Van Halen","Van Halen II",1979
-"28",104,"The Clash","London Calling",1979
-"29",2377,"Blackfield","Blackfield V",2017
-"30",489,"Beastmilk","Climax",2013
-"31",496,"Deafheaven","Sunbather",2013
-"32",481,"Wintersun","Time I",2012
-"33",460,"Protest the Hero","Scurrilous",2011
-"34",2238,"Gunship","Unicorn",2023
-"35",278,"Halford","Resurrection",2000
-"36",691,"Leprous","Aphelion",2021
-"37",1045,"Fu Manchu","Signs of Infinite Power",2009
-"38",1743,"Spoon","Lucifer on the Sofa",2022
-"39",1514,"Judas Priest","Unleashed in the East",1979
-"40",531,"Amorphis","Under the Red Cloud",2015
-"41",2366,"Insomnium","Shadows Of The Dying Sun",2014
-"42",512,"High Spirits","You are Here",2014
-"43",2486,"Atreyu","Suicide Notes And Butterfly Kisses",2002
-"44",23,"Elton John","Honky Chateau",1972
-"45",1897,"Host","IX",2023
-"46",1505,"Seven Spires","Emerald Seas",2020
-"47",2220,"Olivia Rodrigo","GUTS",2023
-"48",734,"Avantasia","A Paranormal Evening with the Moonflower Society",2022
-"49",327,"Isis","Panopticon",2004
-"50",2007,"King Gizzard & The Lizard Wizard","PetroDragonic Apocalypse; or, Dawn of Eternal Night: An Annihilation of Planet Earth and the Beginning of Merciless Damnation",2023
-"51",728,"Porcupine Tree","Closure / Continuation",2022
-"52",1905,"Night Demon","OUTSIDER",2023
-"53",2092,"Warren Zevon","Sentimental Hygiene",1987
-"54",1737,"Machine Head","Øf Kingdøm and Crøwn",2022
-"55",760,"Killing Joke","Pylon",2015
-"56",265,"In Flames","Colony",1999
-"57",251,"Tool","Ænima",1996
-"58",359,"Judas Priest","Angel of Retribution",2005
-"59",1719,"Halsey","If I Can’t Have Love, I Want Power",2021
-"60",435,"The Ocean","Heliocentric",2010
-"61",273,"The Hellacopters","High Visibility",2000
-"62",2069,"Carly Rae Jepsen","The Loveliest Time",2023
-"63",568,"Insomnium","Winter's Gate",2016
-"64",385,"Stone Sour","Come What(ever) May",2006
-"65",465,"Woods of Ypres","Woods 5: Grey Skies & Electric Light",2012
-"66",416,"Warrel Dane","Praises to the War Machine",2008
-"67",102,"Thin Lizzy","Black Rose: A Rock Legend",1979
-"68",494,"Chelsea Wolfe","Pain is Beauty",2013
-"69",763,"White Denim","Stiff",2016
-"70",630,"Charly Bliss","Young Enough",2019
-"71",1367,"Brothers of Metal","Emblas Saga",2020
-"72",187,"Anthrax","Among the Living",1987
-"73",551,"The Mountain Goats","Beat the Champ",2015
-"74",1899,"Necropanther","Betrayal",2023
-"75",2442,"Ihsahn","Das Seelenbrechen",2013
-"76",367,"The Hellacopters","Rock & Roll Is Dead",2006
-"77",472,"Graveyard","Lights Out",2012
-"78",560,"White Lung","Paradise",2016
-"79",69,"Judas Priest","Sad Wings of Destiny",1976
-"80",1001,"Kauan","Kaiho",2017
-"81",252,"Nick Cave & the Bad Seeds","Murder Ballads",1996
-"82",401,"Queens of the Stone Age","Era Vulgaris",2007
-"83",414,"Protest the Hero","Fortress",2008
-"84",2564,"Gorillaz","Plastic Beach",2010
-"85",650,"Night","High Tides - Distant Skies",2020
-"86",2633,"Home Front","Games of Power",2023
-"87",483,"Japandroids","Celebration Rock",2012
-"88",609,"Ancestors","Suspended in Reflections",2018
-"89",141,"Judas Priest","Screaming for Vengeance",1982
-"90",193,"Deep Purple","The House Of Blue Light",1987
-"91",727,"The Hellacopters","Eyes of Oblivion",2022
-"92",667,"Me and That Man","New Man, New Songs, Same Shit, Vol. 1.",2020
-"93",2212,"Spanish Love Songs","No Joy",2023
-"94",390,"Tom Petty","Highway Companion",2006
-"95",586,"Do Make Say Think","Stubborn Persistent Illusions",2017
-"96",411,"Judas Priest","Nostradamus",2008
-"97",831,"Type O Negative","Life is Killing Me",2003
-"98",2217,"Soen","Memorial",2023
-"99",710,"Kvaen","The Great Below",2022
-"100",1962,"SACRED OUTCRY","Towers of Gold",2023
-"101",2303,"Foo Fighters","One By One",2002
-"102",343,"Porcupine Tree","Deadwing",2005
-"103",174,"Pentagram","Relentless",1985
-"104",1968,"Wytch Hazel","IV: Sacrament",2023
-"105",171,"Bruce Springsteen","Born in the U.S.A.",1984
-"106",319,"A Perfect Circle","Thirteenth Step",2003
-"107",311,"Machine Head","Through the Ashes of Empires",2003
-"108",561,"Berwanger","Exorcism Rock",2016
-"109",425,"Devin Townsend Project","Addicted",2009
-"110",2244,"Steven Wilson","The Harmony Codex",2023
-"111",197,"Traveling Wilburys","The Traveling Wilburys, Vol. 1",1988
-"112",1361,"Deathwhite","Grave Image",2020
-"113",407,"Burst","Lazarus Bird",2008
-"114",90,"Van Halen","Van Halen",1978
-"115",2467,"Suotana","Ounas I",2023
-"116",740,"Christian Mistress","To Your Death",2015
-"117",284,"Entombed","Morning Star",2001
-"118",640,"Wilderun","Veil of Imagination",2019
-"119",605,"Leon Bridges","Good Thing",2018
-"120",342,"Unearth","The Oncoming Storm",2004
-"121",745,"Tears for Fears","The Hurting",1983
-"122",1020,"St. Vincent","St. Vincent",2015
-"123",2241,"The Dear Hunter","Migrant Returned",2023
-"124",675,"Julien Baker","Little Oblivions",2021
-"125",2452,"CKY","Carver City",2009
-"126",693,"CHVRCHES","Screen Violence",2021
-"127",1363,"Ihsahn","Telemark",2020
-"128",38,"Pink Floyd","The Dark Side of the Moon",1973
-"129",408,"Amon Amarth","Twilight of the Thunder God",2008
-"130",2510,"Malokarpatan","Vertumnus Caesar",2023
-"131",427,"Isis","Wavering Radiant",2009
-"132",43,"Steely Dan","Countdown to Ecstasy",1973
-"133",578,"All Them Witches","Sleeping Through the War",2017
-"134",56,"Elton John","Captain Fantastic and the Brown Dirt Cowboy",1975
-"135",271,"Red Hot Chili Peppers","Californication",1999
-"136",699,"Manchester Orchestra","The Million Masks Of God",2021
-"137",668,"Megaton Sword","Blood Hails Steel - Steel Hails Fire",2020
-"138",2250,"HAIM","Women in Music Pt. III",2021
-"139",772,"Truckfighters","V",2016
-"140",380,"Eagles of Death Metal","Death by Sexy",2006
-"141",500,"Russian Circles","Memorial",2013
-"142",575,"Valley of the Sun","Volume Rock",2016
-"143",458,"Foo Fighters","Wasting Light",2011
-"144",31,"Steely Dan","Can't Buy A Thrill",1972
-"145",249,"Amorphis","Elegy",1996
-"146",706,"Disillusion","Ayam",2022
-"147",1368,"Kvelertak","Splid",2020
-"148",612,"Thrawsunblat","Great Brunswick Forest",2018
-"149",2466,"Angra","Cycles of Pain",2023
-"150",50,"Frank Zappa","Apostrophe(')",1974
-"151",774,"Father John Misty","Pure Comedy",2017
-"152",1470,"Arjen Anthony Lucassen's Star One","Revel in Time",2022
-"153",285,"Tool","Lateralus",2001
-"154",557,"Carly Rae Jepsen","Emotion Side B",2016
-"155",2313,"The Libertines","Up the Bracket",2002
-"156",215,"Metallica","Metallica",1991
-"157",1191,"Soilwork","Figure Number Five",2003
-"158",564,"Cult of Luna","Mariner",2016
-"159",79,"Judas Priest","Sin After Sin",1977
-"160",505,"Sólstafir","Ótta",2014
-"161",1033,"Margo Price","Strays",2023
-"162",264,"Agalloch","Pale Folklore",1999
-"163",769,"HAIM","Days Are Gone",2013
-"164",627,"Black Sites","Exile",2019
-"165",25,"Wishbone Ash","Argus",1972
-"166",447,"Graveyard","Hisingen Blues",2011
-"167",1874,"First Aid Kit","Palomino",2022
-"168",715,"Trial (SWE)","Feed the Fire",2022
-"169",451,"High Spirits","Another Night",2011
-"170",1652,"Moron Police","The Stranger and the Hightide",2021
-"171",583,"Zeal & Ardor","Devil is Fine",2017
-"172",592,"Squalus","The Great Fish...",2017
-"173",347,"Dark Tranquillity","Character",2005
-"174",590,"Mastodon","Cold Dark Place",2017
-"175",93,"Rainbow","Long Live Rock 'n' Roll",1978
-"176",2116,"The Replacements","Pleased to Meet Me",1987
-"177",513,"Jessica Hernandez and the Deltas","Secret Evil",2014
-"178",2405,"The Gaslight Anthem","History Books",2023
-"179",1985,"Kamelot","Silverthorn",2012
-"180",389,"The Lawrence Arms","Oh! Calcutta!",2006
-"181",597,"Voyager","Ghost Mile",2017
-"182",785,"Haken","Fauna",2023
-"183",275,"In Flames","Clayman",2000
-"184",484,"Clutch","Earth Rocker",2013
-"185",117,"Van Halen","Women and Children First",1980
-"186",2355,"Clint Mansell","The Fountain OST",2006
-"187",431,"Agalloch","Marrow of the Spirit",2010
-"188",1051,"Dream Troll","The Knight of Rebellion",2017
-"189",99,"Judas Priest","Hell Bent for Leather",1979
-"190",336,"Orphaned Land","Mabool - The Story Of The Three Sons Of Seven",2004
-"191",616,"JD McPherson","SOCKS",2018
-"192",21,"John Prine","John Prine",1971
-"193",130,"Iron Maiden","Killers",1981
-"194",642,"Foals","Part 1 Everything Not Saved Will Be Lost",2019
-"195",321,"Edguy","Hellfire Club",2004
-"196",441,"Iron Thrones","The Wretched Sun",2010
-"197",581,"Queens of the Stone Age","Villains",2017
-"198",120,"Bruce Springsteen","The River",1980
-"199",599,"Lorde","Melodrama",2017
-"200",674,"Iotunn","Access all Worlds",2021
-"201",353,"Darkane","Layers of Lies",2005
-"202",766,"Paramore","Paramore",2013
-"203",636,"Sermon","Birth of the Marvellous",2019
-"204",150,"Dio","Holy Diver",1983
-"205",646,"The Ocean","Phanerozoic II: Mesozoic | Cenozoic",2020
-"206",373,"Tool","10,000 Days",2006
-"207",1364,"Ihsahn","Pharos",2020
-"208",369,"Jesu","Silver",2006
-"209",547,"Sleater-Kinney","No Cities to Love",2015
-"210",608,"White Denim","Performance",2018
-"211",355,"Demons & Wizards","Touched by the Crimson King",2005
-"212",2243,"Somnuri","Desiderium",2023
-"213",2245,"The Menzingers","Some Of It Was True",2023
-"214",2566,"Type O Negative","Bloody Kisses",1994
-"215",502,"The Dear Hunter","Migrant",2013
-"216",776,"HAIM","Something to Tell You",2017
-"217",378,"Bible of the Devil","The Diabolic Procession",2006
-"218",783,"The Replacements","Tim",1985
-"219",2224,"Baroness","Stone",2023
-"220",786,"Enslaved","Heimdal",2023
-"221",13,"Elton John","Madman Across the Water",1971
-"222",1222,"Bad Religion","The Empire Strikes First",2004
-"223",641,"Bad Religion","Age of Unreason",2019
-"224",596,"Ulver","The Assassination of Julius Caesar",2017
-"225",2499,"Peter Gabriel","i/o",2023
-"226",2150,"Arrayan Path","Thus Always to Tyrants",2022
-"227",290,"Kamelot","Karma",2001
-"228",2528,"Misfits","Static Age",1978
-"229",82,"Television","Marquee Moon",1977
-"230",520,"Strand of Oaks","Heal",2014
-"231",349,"CKY","An Ånswer Can Be Found",2005
-"232",749,"Heroes Del Silencio","Senderos De Traición",1990
-"233",348,"Opeth","Ghost Reveries",2005
-"234",159,"Ashbury","Endless Skies",1983
-"235",242,"Pantera","Far Beyond Driven",1994
-"236",678,"Dream Troll","Realm of the Tormentor",2021
-"237",623,"Moron Police","A Boat on the Sea",2019
-"238",492,"Protest the Hero","Volition",2013
-"239",594,"The Dear Hunter","All is as All Should Be",2017
-"240",2518,"clipping.","Visions of Bodies Being Burned",2020
-"241",91,"Warren Zevon","Excitable Boy",1978
-"242",529,"Steven Wilson","Hand Cannot Erase",2015
-"243",268,"Nevermore","Dreaming Neon Black",1999
-"244",2632,"Militarie Gun","Life Under the Gun",2023
-"245",577,"Gang of Youths","Go Farther in Lightness",2017
-"246",422,"Guilt Machine","On This Perfect Day",2009
-"247",2323,"John Williams","Jurassic Park",1993
-"248",274,"Corrosion of Conformity","America's Volume Dealer",2000
-"249",1890,"In Flames","Soundtrack To Your Escape",2004
-"250",645,"SACRED OUTCRY","Damned for all Time",2020
-"251",253,"Soundgarden","Down on the Upside",1996
-"252",67,"Rainbow","Rising",1976
-"253",714,"Clutch","Sunrise On Slaughter Beach",2022
-"254",1891,"Unto Others","Strength II",2023
-"255",46,"Deep Purple","Burn",1974
-"256",296,"CKY","Infiltrate-Destory-Rebuild",2002
-"257",538,"Frank Turner","Positive Songs for Negative People",2015
-"258",1748,"Rhapsody of Fire","Symphony of Enchanted Lands II",2004
-"259",624,"Sturgill Simpson","Sound & Fury",2019
-"260",267,"Machine Head","The Burning Red",1999
-"261",649,"Thy Catafalque","Naiv",2020
-"262",256,"In Flames","Whoracle",1997
-"263",213,"Genesis","We Can't Dance",1991
-"264",417,"Mastodon","Crack the Skye",2009
-"265",341,"Turisas","Battle Metal",2004
-"266",241,"Kyuss","Welcome to Sky Valley",1994
-"267",498,"In Solitude","Sister",2013
-"268",471,"Devin Townsend Project","Epicloud",2012
-"269",66,"Warren Zevon","Warren Zevon",1976
-"270",626,"HEALTH","VOL. 4 :: SLAVES OF FEAR",2019
-"271",1091,"CHVRCHES","Every Open Eye",2015
-"272",196,"Queensrÿche","Operation: Mindcrime",1988
-"273",2527,"Alvvays","Alvvays",2014
-"274",1533,"John Carpenter","Lost Themes",2015
-"275",523,"Carly Rae Jepsen","Emotion",2015
-"276",92,"Judas Priest","Stained Class",1978
-"277",223,"Faith No More","Angel Dust",1992
-"278",291,"Avantasia","The Metal Opera, Pt. I",2001
-"279",423,"Amorphis","Skyforger",2009
-"280",116,"Judas Priest","British Steel",1980
-"281",161,"Judas Priest","Defenders of the Faith",1984
-"282",206,"Judas Priest","Painkiller",1990
-"283",601,"Judas Priest","Firepower",2018
-"284",1512,"Judas Priest","Turbo 30",1986
-"285",1513,"Judas Priest","Ram it Down",1988
-"286",1515,"Judas Priest","Point of Entry",1981
-"287",1516,"Judas Priest","Rocka Rolla",1974
-"288",2261,"Judas Priest","Redeemer of Souls",2014
-"289",2557,"Judas Priest","Invincible Shield",2024
+"artist","album","Year","order"
+"Devin Townsend Project","Addicted",2009,"Addicted Devin Townsend Project 2009"
+"The Dear Hunter","Act V: Hymns With the Devil in Confessional",2016,"Act V: Hymns With the Devil in Confessional The Dear Hunter 2016"
+"Klone","Meanwhile",2023,"Meanwhile Klone 2023"
+"The Ocean","Heliocentric",2010,"Heliocentric The Ocean 2010"
+"Type O Negative","Life is Killing Me",2003,"Life is Killing Me Type O Negative 2003"
+"Grave Pleasures","Plagueboys",2023,"Plagueboys Grave Pleasures 2023"
+"Van Halen","Fair Warning",1981,"Fair Warning Van Halen 1981"
+"Pink Floyd","The Dark Side of the Moon",1973,"The Dark Side of the Moon Pink Floyd 1973"
+"Seven Spires","Gods of Debauchery",2021,"Gods of Debauchery Seven Spires 2021"
+"Judas Priest","British Steel",1980,"British Steel Judas Priest 1980"
+"Shadows Fall","The Art of Balance",2002,"The Art of Balance Shadows Fall 2002"
+"Clint Mansell","The Fountain OST",2006,"The Fountain OST Clint Mansell 2006"
+"AC/DC","Highway to Hell",1979,"Highway to Hell AC/DC 1979"
+"Porcupine Tree","Fear of a Blank Planet",2007,"Fear of a Blank Planet Porcupine Tree 2007"
+"Agalloch","The Serpent & The Sphere",2014,"The Serpent & The Sphere Agalloch 2014"
+"Boots Electric","Honkey Kong",2011,"Honkey Kong Boots Electric 2011"
+"Judas Priest","Stained Class",1978,"Stained Class Judas Priest 1978"
+"Kyuss","Welcome to Sky Valley",1994,"Welcome to Sky Valley Kyuss 1994"
+"Parry Gripp","Parry Gripp Mega-Party",2013,"Parry Gripp Mega-Party Parry Gripp 2013"
+"Warren Zevon","Mr. Bad Example",1991,"Mr. Bad Example Warren Zevon 1991"
+"John Carpenter","Lost Themes",2015,"Lost Themes John Carpenter 2015"
+"Kvelertak","Endling",2023,"Endling Kvelertak 2023"
+"TV on the Radio","Nine Types of Light",2011,"Nine Types of Light TV on the Radio 2011"
+"Seven Spires","Emerald Seas",2020,"Emerald Seas Seven Spires 2020"
+"Graveyard","6",2023,"6 Graveyard 2023"
+"Trial (SWE)","Feed the Fire",2022,"Feed the Fire Trial (SWE) 2022"
+"Black Sites","Untrue",2021,"Untrue Black Sites 2021"
+"Arctic Monkeys","AM",2013,"AM Arctic Monkeys 2013"
+"The Menzingers","Hello Exile",2019,"Hello Exile The Menzingers 2019"
+"Dark Tranquillity","Damage Done",2002,"Damage Done Dark Tranquillity 2002"
+"Thin Lizzy","Black Rose: A Rock Legend",1979,"Black Rose: A Rock Legend Thin Lizzy 1979"
+"Me and That Man","New Man, New Songs, Same Shit, Vol. 1.",2020,"New Man, New Songs, Same Shit, Vol. 1. Me and That Man 2020"
+"Carly Rae Jepsen","Emotion Side B",2016,"Emotion Side B Carly Rae Jepsen 2016"
+"Warrel Dane","Praises to the War Machine",2008,"Praises to the War Machine Warrel Dane 2008"
+"Queens of the Stone Age","Era Vulgaris",2007,"Era Vulgaris Queens of the Stone Age 2007"
+"Nevermore","This Godless Endeavor",2005,"This Godless Endeavor Nevermore 2005"
+"Kamelot","Silverthorn",2012,"Silverthorn Kamelot 2012"
+"Kamelot","Karma",2001,"Karma Kamelot 2001"
+"Wytch Hazel","III:Pentecost",2020,"III:Pentecost Wytch Hazel 2020"
+"Anthrax","Volume 8: The Threat Is Real",1998,"Volume 8: The Threat Is Real Anthrax 1998"
+"Faith No More","Angel Dust",1992,"Angel Dust Faith No More 1992"
+"In Flames","The Jester Race",1996,"The Jester Race In Flames 1996"
+"Scar Symmetry","Holographic Universe",2008,"Holographic Universe Scar Symmetry 2008"
+"Thy Catafalque","Vadak",2021,"Vadak Thy Catafalque 2021"
+"Borknagar","True North",2019,"True North Borknagar 2019"
+"Enslaved","In Times",2015,"In Times Enslaved 2015"
+"Tom Petty","Wildflowers",1994,"Wildflowers Tom Petty 1994"
+"Jason Isbell","Southeastern",2013,"Southeastern Jason Isbell 2013"
+"Misfits","Static Age",1978,"Static Age Misfits 1978"
+"Traveling Wilburys","The Traveling Wilburys, Vol. 1",1988,"The Traveling Wilburys, Vol. 1 Traveling Wilburys 1988"
+"Devin Townsend Project","Epicloud",2012,"Epicloud Devin Townsend Project 2012"
+"Kauan","Sorni Nai",2015,"Sorni Nai Kauan 2015"
+"HAIM","Days Are Gone",2013,"Days Are Gone HAIM 2013"
+"Viagra Boys","Cave World",2022,"Cave World Viagra Boys 2022"
+"Mastodon","Crack the Skye",2009,"Crack the Skye Mastodon 2009"
+"Black Sites","Exile",2019,"Exile Black Sites 2019"
+"Manchester Orchestra","A Black Mile to the Surface",2017,"A Black Mile to the Surface Manchester Orchestra 2017"
+"Katatonia","The Fall of Hearts",2016,"The Fall of Hearts Katatonia 2016"
+"Arrayan Path","Thus Always to Tyrants",2022,"Thus Always to Tyrants Arrayan Path 2022"
+"Clutch","Transnational Speedway League: Anthems, Anecdotes and Undeniable Truths",1993,"Transnational Speedway League: Anthems, Anecdotes and Undeniable Truths Clutch 1993"
+"The Ocean","Holocene",2023,"Holocene The Ocean 2023"
+"Sam Fender","Seventeen Going Under",2021,"Seventeen Going Under Sam Fender 2021"
+"Black Sabbath","Sabbath Bloody Sabbath",1973,"Sabbath Bloody Sabbath Black Sabbath 1973"
+"Shadows Fall","The War Within",2004,"The War Within Shadows Fall 2004"
+"Graveyard","Lights Out",2012,"Lights Out Graveyard 2012"
+"Conor Oberst","Ruminations",2016,"Ruminations Conor Oberst 2016"
+"Julien Baker","Little Oblivions",2021,"Little Oblivions Julien Baker 2021"
+"Kauan","Ice Fleet",2021,"Ice Fleet Kauan 2021"
+"Avantasia","The Mystery of Time",2013,"The Mystery of Time Avantasia 2013"
+"Charly Bliss","Young Enough",2019,"Young Enough Charly Bliss 2019"
+"Disillusion","Ayam",2022,"Ayam Disillusion 2022"
+"In Solitude","Sister",2013,"Sister In Solitude 2013"
+"Judas Priest","Nostradamus",2008,"Nostradamus Judas Priest 2008"
+"At the Gates","Slaughter of the Soul",1995,"Slaughter of the Soul At the Gates 1995"
+"Agalloch","The White EP",2008,"The White EP Agalloch 2008"
+"Amorphis","Under the Red Cloud",2015,"Under the Red Cloud Amorphis 2015"
+"Porcupine Tree","Closure / Continuation",2022,"Closure / Continuation Porcupine Tree 2022"
+"The Beaches","Blame My Ex",2023,"Blame My Ex The Beaches 2023"
+"Grave Pleasures","Dreamcrash",2015,"Dreamcrash Grave Pleasures 2015"
+"Pure Reason Revolution","Above Cirrus",2022,"Above Cirrus Pure Reason Revolution 2022"
+"The Company Band","The Company Band",2009,"The Company Band The Company Band 2009"
+"Brant Bjork","Gods & Goddesses",2010,"Gods & Goddesses Brant Bjork 2010"
+"CKY","Carver City",2009,"Carver City CKY 2009"
+"Lamb of God","Sacrament",2006,"Sacrament Lamb of God 2006"
+"Oceans of Slumber","Starlight and Ash",2022,"Starlight and Ash Oceans of Slumber 2022"
+"Seven Sisters","Shadow Of A Fallen Star, Pt. 1",2021,"Shadow Of A Fallen Star, Pt. 1 Seven Sisters 2021"
+"Bruce Springsteen","Western Stars",2019,"Western Stars Bruce Springsteen 2019"
+"Pentagram","Relentless",1985,"Relentless Pentagram 1985"
+"Dio","The Last in Line",1984,"The Last in Line Dio 1984"
+"Spoon","They Want My Soul",2014,"They Want My Soul Spoon 2014"
+"Thy Catafalque","Sgùrr",2015,"Sgùrr Thy Catafalque 2015"
+"Kauan","Kaiho",2017,"Kaiho Kauan 2017"
+"XTC","Drums and Wires",1979,"Drums and Wires XTC 1979"
+"Mastodon","Leviathan",2004,"Leviathan Mastodon 2004"
+"Truckfighters","V",2016,"V Truckfighters 2016"
+"Clutch","Psychic Warfare",2015,"Psychic Warfare Clutch 2015"
+"Junius","Eternal Rituals for the Accretion of Light",2017,"Eternal Rituals for the Accretion of Light Junius 2017"
+"Judas Priest","Sin After Sin",1977,"Sin After Sin Judas Priest 1977"
+"Eagles of Death Metal","Heart On",2008,"Heart On Eagles of Death Metal 2008"
+"Steven Wilson","Grace for Drowning",2011,"Grace for Drowning Steven Wilson 2011"
+"Satan's Hallow","Satan's Hallow",2017,"Satan's Hallow Satan's Hallow 2017"
+"Deathwhite","Grave Image",2020,"Grave Image Deathwhite 2020"
+"Greyhawk","Keepers of the Flame",2020,"Keepers of the Flame Greyhawk 2020"
+"Perturbator","Dangerous Days",2014,"Dangerous Days Perturbator 2014"
+"CKY","An Ånswer Can Be Found",2005,"An Ånswer Can Be Found CKY 2005"
+"Iron Maiden","Iron Maiden",1980,"Iron Maiden Iron Maiden 1980"
+"Benjamin Booker","Benjamin Booker",2014,"Benjamin Booker Benjamin Booker 2014"
+"Probot","Probot",2004,"Probot Probot 2004"
+"Nick Cave & the Bad Seeds","Murder Ballads",1996,"Murder Ballads Nick Cave & the Bad Seeds 1996"
+"The Black Keys","El Camino",2011,"El Camino The Black Keys 2011"
+"The War on Drugs","Lost in the Dream",2014,"Lost in the Dream The War on Drugs 2014"
+"Steely Dan","Pretzel Logic",1974,"Pretzel Logic Steely Dan 1974"
+"The Night Flight Orchestra","Sometimes the World Ain't Enough",2018,"Sometimes the World Ain't Enough The Night Flight Orchestra 2018"
+"White Denim","Side Effects",2019,"Side Effects White Denim 2019"
+"The Mountain Goats","Beat the Champ",2015,"Beat the Champ The Mountain Goats 2015"
+"Kvaen","The Funeral Pyre",2020,"The Funeral Pyre Kvaen 2020"
+"Bleachers","Take the Sadness Out of Saturday Night",2021,"Take the Sadness Out of Saturday Night Bleachers 2021"
+"The Ocean","Phanerozoic I: Palaeozoic",2018,"Phanerozoic I: Palaeozoic The Ocean 2018"
+"White Denim","Stiff",2016,"Stiff White Denim 2016"
+"Bad Religion","Age of Unreason",2019,"Age of Unreason Bad Religion 2019"
+"The Hives","The Death Of Randy Fitzsimmons",2023,"The Death Of Randy Fitzsimmons The Hives 2023"
+"Eagles of Death Metal","Peace Love Death Metal",2004,"Peace Love Death Metal Eagles of Death Metal 2004"
+"Blind Guardian","A Twist in the Myth",2006,"A Twist in the Myth Blind Guardian 2006"
+"Amorphis","Circle",2013,"Circle Amorphis 2013"
+"The Highwomen","The Highwomen",2019,"The Highwomen The Highwomen 2019"
+"Talking Heads","Little Creatures",1985,"Little Creatures Talking Heads 1985"
+"Father John Misty","Pure Comedy",2017,"Pure Comedy Father John Misty 2017"
+"Elton John","The Union",2010,"The Union Elton John 2010"
+"The Black Dahlia Murder","Unhallowed",2003,"Unhallowed The Black Dahlia Murder 2003"
+"FEVER 333","Wrong Generation",2020,"Wrong Generation FEVER 333 2020"
+"Solitude Aeturnus","Alone",2006,"Alone Solitude Aeturnus 2006"
+"Amorphis","Halo",2022,"Halo Amorphis 2022"
+"Royal Thunder","Crooked Doors",2015,"Crooked Doors Royal Thunder 2015"
+"The Night Flight Orchestra","Aeromantic II",2021,"Aeromantic II The Night Flight Orchestra 2021"
+"Low Cut Connie","Art Dealers",2023,"Art Dealers Low Cut Connie 2023"
+"Squalus","The Great Fish...",2017,"The Great Fish... Squalus 2017"
+"Bad Religion","The Empire Strikes First",2004,"The Empire Strikes First Bad Religion 2004"
+"Corrosion of Conformity","In the Arms of God",2005,"In the Arms of God Corrosion of Conformity 2005"
+"The Ocean","Phanerozoic II: Mesozoic | Cenozoic",2020,"Phanerozoic II: Mesozoic | Cenozoic The Ocean 2020"
+"Do Make Say Think","Stubborn Persistent Illusions",2017,"Stubborn Persistent Illusions Do Make Say Think 2017"
+"Spidergawd","Spidergawd VII",2023,"Spidergawd VII Spidergawd 2023"
+"Spanish Love Songs","Brave Faces Everyone",2020,"Brave Faces Everyone Spanish Love Songs 2020"
+"Enslaved","RUUN",2006,"RUUN Enslaved 2006"
+"Black Sabbath","Heaven and Hell",1980,"Heaven and Hell Black Sabbath 1980"
+"Opeth","In Cauda Venenum",2019,"In Cauda Venenum Opeth 2019"
+"Lunar Shadow","The Smokeless Fires",2019,"The Smokeless Fires Lunar Shadow 2019"
+"Queens of the Stone Age","...Like Clockwork",2013,"...Like Clockwork Queens of the Stone Age 2013"
+"Unto Others","Strength II",2023,"Strength II Unto Others 2023"
+"Machine Head","Through the Ashes of Empires",2003,"Through the Ashes of Empires Machine Head 2003"
+"Jason Isbell and The 400 Unit","Weathervanes",2023,"Weathervanes Jason Isbell and The 400 Unit 2023"
+"Valley of the Sun","Volume Rock",2016,"Volume Rock Valley of the Sun 2016"
+"Elton John","Goodbye Yellow Brick Road",1973,"Goodbye Yellow Brick Road Elton John 1973"
+"High Spirits","Motivator",2016,"Motivator High Spirits 2016"
+"Edguy","Tinnitus Sanctus",2008,"Tinnitus Sanctus Edguy 2008"
+"Eagles of Death Metal","Zipper Down",2015,"Zipper Down Eagles of Death Metal 2015"
+"Opeth","Deliverance",2002,"Deliverance Opeth 2002"
+"Foo Fighters","One By One",2002,"One By One Foo Fighters 2002"
+"Kamelot","The Black Halo",2005,"The Black Halo Kamelot 2005"
+"The Menzingers","Some Of It Was True",2023,"Some Of It Was True The Menzingers 2023"
+"Elder","Innate Passage",2022,"Innate Passage Elder 2022"
+"Cult of Luna","Vertikal",2013,"Vertikal Cult of Luna 2013"
+"Descendents","Milo Goes to College",1982,"Milo Goes to College Descendents 1982"
+"Clutch","From Beale Street to Oblivion",2007,"From Beale Street to Oblivion Clutch 2007"
+"Giant Squid","The Ichthyologist",2009,"The Ichthyologist Giant Squid 2009"
+"Atlantean Kodex","The Course of Empire",2019,"The Course of Empire Atlantean Kodex 2019"
+"Paradise Lost","Obsidian",2020,"Obsidian Paradise Lost 2020"
+"Fear Factory","Demanufacture",1995,"Demanufacture Fear Factory 1995"
+"Blue Öyster Cult","Fire of Unknown Origin",1981,"Fire of Unknown Origin Blue Öyster Cult 1981"
+"Hall & Oates","Private Eyes",1981,"Private Eyes Hall & Oates 1981"
+"Three","The Ghost you Gave to Me",2011,"The Ghost you Gave to Me Three 2011"
+"Iotunn","Access all Worlds",2021,"Access all Worlds Iotunn 2021"
+"Rhapsody of Fire","Symphony of Enchanted Lands II",2004,"Symphony of Enchanted Lands II Rhapsody of Fire 2004"
+"Insomnium","Above the Weeping World",2006,"Above the Weeping World Insomnium 2006"
+"Katatonia","Dethroned & Uncrowned",2013,"Dethroned & Uncrowned Katatonia 2013"
+"Sturgill Simpson","Sound & Fury",2019,"Sound & Fury Sturgill Simpson 2019"
+"In Aphelion","Moribund",2022,"Moribund In Aphelion 2022"
+"Ayreon","The Source",2017,"The Source Ayreon 2017"
+"Truckfighters","Universe",2014,"Universe Truckfighters 2014"
+"Host","IX",2023,"IX Host 2023"
+"Lunar Shadow","Wish to Leave",2021,"Wish to Leave Lunar Shadow 2021"
+"Ashbury","Endless Skies",1983,"Endless Skies Ashbury 1983"
+"In Flames","Foregone",2023,"Foregone In Flames 2023"
+"Genesis","Genesis",1983,"Genesis Genesis 1983"
+"Tears for Fears","The Hurting",1983,"The Hurting Tears for Fears 1983"
+"Anathema","Weather Systems",2012,"Weather Systems Anathema 2012"
+"INXS","Kick",1987,"Kick INXS 1987"
+"Gunship","Unicorn",2023,"Unicorn Gunship 2023"
+"The Parlor Mob","Cry Wolf",2015,"Cry Wolf The Parlor Mob 2015"
+"Steven Wilson","The Harmony Codex",2023,"The Harmony Codex Steven Wilson 2023"
+"Moron Police","A Boat on the Sea",2019,"A Boat on the Sea Moron Police 2019"
+"Måneskin","RUSH!",2023,"RUSH! Måneskin 2023"
+"Arjen Anthony Lucassen's Star One","Revel in Time",2022,"Revel in Time Arjen Anthony Lucassen's Star One 2022"
+"The Dear Hunter","Migrant Returned",2023,"Migrant Returned The Dear Hunter 2023"
+"Eagles of Death Metal","Death by Sexy",2006,"Death by Sexy Eagles of Death Metal 2006"
+"CHVRCHES","Screen Violence",2021,"Screen Violence CHVRCHES 2021"
+"Anthrax","We've Come for you All",2003,"We've Come for you All Anthrax 2003"
+"Talking Heads","Talking Heads '77",1977,"Talking Heads '77 Talking Heads 1977"
+"Voyager","Ghost Mile",2017,"Ghost Mile Voyager 2017"
+"Blood Star","First Sighting",2023,"First Sighting Blood Star 2023"
+"Kurt Vile","Wakin on a Pretty Daze",2013,"Wakin on a Pretty Daze Kurt Vile 2013"
+"Slipknot","Slipknot",1999,"Slipknot Slipknot 1999"
+"Chris Cornell","Carry On",2007,"Carry On Chris Cornell 2007"
+"Elton John","Madman Across the Water",1971,"Madman Across the Water Elton John 1971"
+"Queens of the Stone Age","Villains",2017,"Villains Queens of the Stone Age 2017"
+"Torche","Torche",2005,"Torche Torche 2005"
+"Machine Head","The More Things Change",1997,"The More Things Change Machine Head 1997"
+"Type O Negative","Bloody Kisses",1994,"Bloody Kisses Type O Negative 1994"
+"Iron Maiden","The Book of Souls",2015,"The Book of Souls Iron Maiden 2015"
+"Panopticon","Kentucky",2012,"Kentucky Panopticon 2012"
+"The Tragically Hip","Up to Here",1989,"Up to Here The Tragically Hip 1989"
+"Paramore","After Laughter",2017,"After Laughter Paramore 2017"
+"Clutch","Earth Rocker",2013,"Earth Rocker Clutch 2013"
+"Fires in the Distance","Air Not Meant for Us",2023,"Air Not Meant for Us Fires in the Distance 2023"
+"Protest the Hero","Kezia",2005,"Kezia Protest the Hero 2005"
+"The Lawrence Arms","Oh! Calcutta!",2006,"Oh! Calcutta! The Lawrence Arms 2006"
+"Margo Price","All American Made",2017,"All American Made Margo Price 2017"
+"Muse","Black Holes and Revelations",2006,"Black Holes and Revelations Muse 2006"
+"Blind Guardian","Tales From the Twilight World",1990,"Tales From the Twilight World Blind Guardian 1990"
+"Metallica","...And Justice For All",1988,"...And Justice For All Metallica 1988"
+"Teramaze","Flight of the Wounded",2022,"Flight of the Wounded Teramaze 2022"
+"Mastodon","The Hunter",2011,"The Hunter Mastodon 2011"
+"Gang of Youths","angel in realtime.",2022,"angel in realtime. Gang of Youths 2022"
+"Steven Wilson","To the Bone",2017,"To the Bone Steven Wilson 2017"
+"Lamb of God","As the Palaces Burn",2003,"As the Palaces Burn Lamb of God 2003"
+"Darkest Hour","Undoing Ruin",2005,"Undoing Ruin Darkest Hour 2005"
+"Amorphis","Eclipse",2006,"Eclipse Amorphis 2006"
+"True Widow","Circumambulation",2013,"Circumambulation True Widow 2013"
+"As I Lay Dying","Shadows Are Security",2005,"Shadows Are Security As I Lay Dying 2005"
+"Deep Purple","Stormbringer",1974,"Stormbringer Deep Purple 1974"
+"40 Watt Sun","The Inside Room - EP",2011,"The Inside Room - EP 40 Watt Sun 2011"
+"Angra","Temple of Shadows",2004,"Temple of Shadows Angra 2004"
+"Mushroomhead","XIII",2003,"XIII Mushroomhead 2003"
+"Refused","The Shape Of Punk To Come",1998,"The Shape Of Punk To Come Refused 1998"
+"OSI","Fire Make Thunder",2012,"Fire Make Thunder OSI 2012"
+"Slipknot","Vol. 3: The Subliminal Verses",2004,"Vol. 3: The Subliminal Verses Slipknot 2004"
+"Primordial","How it Ends",2023,"How it Ends Primordial 2023"
+"Gunship","Dark All Day",2018,"Dark All Day Gunship 2018"
+"Van Halen","Van Halen II",1979,"Van Halen II Van Halen 1979"
+"The Clash","London Calling",1979,"London Calling The Clash 1979"
+"Blackfield","Blackfield V",2017,"Blackfield V Blackfield 2017"
+"Beastmilk","Climax",2013,"Climax Beastmilk 2013"
+"Deafheaven","Sunbather",2013,"Sunbather Deafheaven 2013"
+"Wintersun","Time I",2012,"Time I Wintersun 2012"
+"Protest the Hero","Scurrilous",2011,"Scurrilous Protest the Hero 2011"
+"Halford","Resurrection",2000,"Resurrection Halford 2000"
+"Leprous","Aphelion",2021,"Aphelion Leprous 2021"
+"Fu Manchu","Signs of Infinite Power",2009,"Signs of Infinite Power Fu Manchu 2009"
+"Spoon","Lucifer on the Sofa",2022,"Lucifer on the Sofa Spoon 2022"
+"Judas Priest","Unleashed in the East",1979,"Unleashed in the East Judas Priest 1979"
+"Insomnium","Shadows Of The Dying Sun",2014,"Shadows Of The Dying Sun Insomnium 2014"
+"High Spirits","You are Here",2014,"You are Here High Spirits 2014"
+"Atreyu","Suicide Notes And Butterfly Kisses",2002,"Suicide Notes And Butterfly Kisses Atreyu 2002"
+"Elton John","Honky Chateau",1972,"Honky Chateau Elton John 1972"
+"Olivia Rodrigo","GUTS",2023,"GUTS Olivia Rodrigo 2023"
+"Avantasia","A Paranormal Evening with the Moonflower Society",2022,"A Paranormal Evening with the Moonflower Society Avantasia 2022"
+"Isis","Panopticon",2004,"Panopticon Isis 2004"
+"King Gizzard & The Lizard Wizard","PetroDragonic Apocalypse; or, Dawn of Eternal Night: An Annihilation of Planet Earth and the Beginning of Merciless Damnation",2023,"PetroDragonic Apocalypse; or, Dawn of Eternal Night: An Annihilation of Planet Earth and the Beginning of Merciless Damnation King Gizzard & The Lizard Wizard 2023"
+"Night Demon","OUTSIDER",2023,"OUTSIDER Night Demon 2023"
+"Warren Zevon","Sentimental Hygiene",1987,"Sentimental Hygiene Warren Zevon 1987"
+"Machine Head","Øf Kingdøm and Crøwn",2022,"Øf Kingdøm and Crøwn Machine Head 2022"
+"Killing Joke","Pylon",2015,"Pylon Killing Joke 2015"
+"In Flames","Colony",1999,"Colony In Flames 1999"
+"Tool","Ænima",1996,"Ænima Tool 1996"
+"Judas Priest","Angel of Retribution",2005,"Angel of Retribution Judas Priest 2005"
+"Halsey","If I Can’t Have Love, I Want Power",2021,"If I Can’t Have Love, I Want Power Halsey 2021"
+"The Hellacopters","High Visibility",2000,"High Visibility The Hellacopters 2000"
+"Carly Rae Jepsen","The Loveliest Time",2023,"The Loveliest Time Carly Rae Jepsen 2023"
+"Insomnium","Winter's Gate",2016,"Winter's Gate Insomnium 2016"
+"Stone Sour","Come What(ever) May",2006,"Come What(ever) May Stone Sour 2006"
+"Woods of Ypres","Woods 5: Grey Skies & Electric Light",2012,"Woods 5: Grey Skies & Electric Light Woods of Ypres 2012"
+"Chelsea Wolfe","Pain is Beauty",2013,"Pain is Beauty Chelsea Wolfe 2013"
+"Brothers of Metal","Emblas Saga",2020,"Emblas Saga Brothers of Metal 2020"
+"Anthrax","Among the Living",1987,"Among the Living Anthrax 1987"
+"Necropanther","Betrayal",2023,"Betrayal Necropanther 2023"
+"Ihsahn","Das Seelenbrechen",2013,"Das Seelenbrechen Ihsahn 2013"
+"The Hellacopters","Rock & Roll Is Dead",2006,"Rock & Roll Is Dead The Hellacopters 2006"
+"White Lung","Paradise",2016,"Paradise White Lung 2016"
+"Judas Priest","Sad Wings of Destiny",1976,"Sad Wings of Destiny Judas Priest 1976"
+"Protest the Hero","Fortress",2008,"Fortress Protest the Hero 2008"
+"Gorillaz","Plastic Beach",2010,"Plastic Beach Gorillaz 2010"
+"Night","High Tides - Distant Skies",2020,"High Tides - Distant Skies Night 2020"
+"Home Front","Games of Power",2023,"Games of Power Home Front 2023"
+"Japandroids","Celebration Rock",2012,"Celebration Rock Japandroids 2012"
+"Ancestors","Suspended in Reflections",2018,"Suspended in Reflections Ancestors 2018"
+"Judas Priest","Screaming for Vengeance",1982,"Screaming for Vengeance Judas Priest 1982"
+"Deep Purple","The House Of Blue Light",1987,"The House Of Blue Light Deep Purple 1987"
+"The Hellacopters","Eyes of Oblivion",2022,"Eyes of Oblivion The Hellacopters 2022"
+"Spanish Love Songs","No Joy",2023,"No Joy Spanish Love Songs 2023"
+"Tom Petty","Highway Companion",2006,"Highway Companion Tom Petty 2006"
+"Soen","Memorial",2023,"Memorial Soen 2023"
+"Kvaen","The Great Below",2022,"The Great Below Kvaen 2022"
+"SACRED OUTCRY","Towers of Gold",2023,"Towers of Gold SACRED OUTCRY 2023"
+"Porcupine Tree","Deadwing",2005,"Deadwing Porcupine Tree 2005"
+"Wytch Hazel","IV: Sacrament",2023,"IV: Sacrament Wytch Hazel 2023"
+"Bruce Springsteen","Born in the U.S.A.",1984,"Born in the U.S.A. Bruce Springsteen 1984"
+"A Perfect Circle","Thirteenth Step",2003,"Thirteenth Step A Perfect Circle 2003"
+"Berwanger","Exorcism Rock",2016,"Exorcism Rock Berwanger 2016"
+"Burst","Lazarus Bird",2008,"Lazarus Bird Burst 2008"
+"Van Halen","Van Halen",1978,"Van Halen Van Halen 1978"
+"Suotana","Ounas I",2023,"Ounas I Suotana 2023"
+"Christian Mistress","To Your Death",2015,"To Your Death Christian Mistress 2015"
+"Entombed","Morning Star",2001,"Morning Star Entombed 2001"
+"Wilderun","Veil of Imagination",2019,"Veil of Imagination Wilderun 2019"
+"Leon Bridges","Good Thing",2018,"Good Thing Leon Bridges 2018"
+"Unearth","The Oncoming Storm",2004,"The Oncoming Storm Unearth 2004"
+"St. Vincent","St. Vincent",2015,"St. Vincent St. Vincent 2015"
+"Ihsahn","Telemark",2020,"Telemark Ihsahn 2020"
+"Amon Amarth","Twilight of the Thunder God",2008,"Twilight of the Thunder God Amon Amarth 2008"
+"Malokarpatan","Vertumnus Caesar",2023,"Vertumnus Caesar Malokarpatan 2023"
+"Isis","Wavering Radiant",2009,"Wavering Radiant Isis 2009"
+"Steely Dan","Countdown to Ecstasy",1973,"Countdown to Ecstasy Steely Dan 1973"
+"All Them Witches","Sleeping Through the War",2017,"Sleeping Through the War All Them Witches 2017"
+"Elton John","Captain Fantastic and the Brown Dirt Cowboy",1975,"Captain Fantastic and the Brown Dirt Cowboy Elton John 1975"
+"Red Hot Chili Peppers","Californication",1999,"Californication Red Hot Chili Peppers 1999"
+"Manchester Orchestra","The Million Masks Of God",2021,"The Million Masks Of God Manchester Orchestra 2021"
+"Megaton Sword","Blood Hails Steel - Steel Hails Fire",2020,"Blood Hails Steel - Steel Hails Fire Megaton Sword 2020"
+"HAIM","Women in Music Pt. III",2021,"Women in Music Pt. III HAIM 2021"
+"Russian Circles","Memorial",2013,"Memorial Russian Circles 2013"
+"Foo Fighters","Wasting Light",2011,"Wasting Light Foo Fighters 2011"
+"Steely Dan","Can't Buy A Thrill",1972,"Can't Buy A Thrill Steely Dan 1972"
+"Amorphis","Elegy",1996,"Elegy Amorphis 1996"
+"Kvelertak","Splid",2020,"Splid Kvelertak 2020"
+"Thrawsunblat","Great Brunswick Forest",2018,"Great Brunswick Forest Thrawsunblat 2018"
+"Angra","Cycles of Pain",2023,"Cycles of Pain Angra 2023"
+"Frank Zappa","Apostrophe(')",1974,"Apostrophe(') Frank Zappa 1974"
+"Tool","Lateralus",2001,"Lateralus Tool 2001"
+"The Libertines","Up the Bracket",2002,"Up the Bracket The Libertines 2002"
+"Metallica","Metallica",1991,"Metallica Metallica 1991"
+"Soilwork","Figure Number Five",2003,"Figure Number Five Soilwork 2003"
+"Cult of Luna","Mariner",2016,"Mariner Cult of Luna 2016"
+"Sólstafir","Ótta",2014,"Ótta Sólstafir 2014"
+"Margo Price","Strays",2023,"Strays Margo Price 2023"
+"Agalloch","Pale Folklore",1999,"Pale Folklore Agalloch 1999"
+"Wishbone Ash","Argus",1972,"Argus Wishbone Ash 1972"
+"Graveyard","Hisingen Blues",2011,"Hisingen Blues Graveyard 2011"
+"First Aid Kit","Palomino",2022,"Palomino First Aid Kit 2022"
+"High Spirits","Another Night",2011,"Another Night High Spirits 2011"
+"Moron Police","The Stranger and the Hightide",2021,"The Stranger and the Hightide Moron Police 2021"
+"Zeal & Ardor","Devil is Fine",2017,"Devil is Fine Zeal & Ardor 2017"
+"Dark Tranquillity","Character",2005,"Character Dark Tranquillity 2005"
+"Mastodon","Cold Dark Place",2017,"Cold Dark Place Mastodon 2017"
+"Rainbow","Long Live Rock 'n' Roll",1978,"Long Live Rock 'n' Roll Rainbow 1978"
+"The Replacements","Pleased to Meet Me",1987,"Pleased to Meet Me The Replacements 1987"
+"Jessica Hernandez and the Deltas","Secret Evil",2014,"Secret Evil Jessica Hernandez and the Deltas 2014"
+"The Gaslight Anthem","History Books",2023,"History Books The Gaslight Anthem 2023"
+"Haken","Fauna",2023,"Fauna Haken 2023"
+"In Flames","Clayman",2000,"Clayman In Flames 2000"
+"Van Halen","Women and Children First",1980,"Women and Children First Van Halen 1980"
+"Agalloch","Marrow of the Spirit",2010,"Marrow of the Spirit Agalloch 2010"
+"Dream Troll","The Knight of Rebellion",2017,"The Knight of Rebellion Dream Troll 2017"
+"Judas Priest","Hell Bent for Leather",1979,"Hell Bent for Leather Judas Priest 1979"
+"Orphaned Land","Mabool - The Story Of The Three Sons Of Seven",2004,"Mabool - The Story Of The Three Sons Of Seven Orphaned Land 2004"
+"JD McPherson","SOCKS",2018,"SOCKS JD McPherson 2018"
+"John Prine","John Prine",1971,"John Prine John Prine 1971"
+"Iron Maiden","Killers",1981,"Killers Iron Maiden 1981"
+"Foals","Part 1 Everything Not Saved Will Be Lost",2019,"Part 1 Everything Not Saved Will Be Lost Foals 2019"
+"Edguy","Hellfire Club",2004,"Hellfire Club Edguy 2004"
+"Iron Thrones","The Wretched Sun",2010,"The Wretched Sun Iron Thrones 2010"
+"Bruce Springsteen","The River",1980,"The River Bruce Springsteen 1980"
+"Lorde","Melodrama",2017,"Melodrama Lorde 2017"
+"Darkane","Layers of Lies",2005,"Layers of Lies Darkane 2005"
+"Paramore","Paramore",2013,"Paramore Paramore 2013"
+"Sermon","Birth of the Marvellous",2019,"Birth of the Marvellous Sermon 2019"
+"Dio","Holy Diver",1983,"Holy Diver Dio 1983"
+"Tool","10,000 Days",2006,"10,000 Days Tool 2006"
+"Ihsahn","Pharos",2020,"Pharos Ihsahn 2020"
+"Jesu","Silver",2006,"Silver Jesu 2006"
+"Sleater-Kinney","No Cities to Love",2015,"No Cities to Love Sleater-Kinney 2015"
+"White Denim","Performance",2018,"Performance White Denim 2018"
+"Demons & Wizards","Touched by the Crimson King",2005,"Touched by the Crimson King Demons & Wizards 2005"
+"Somnuri","Desiderium",2023,"Desiderium Somnuri 2023"
+"The Dear Hunter","Migrant",2013,"Migrant The Dear Hunter 2013"
+"HAIM","Something to Tell You",2017,"Something to Tell You HAIM 2017"
+"Bible of the Devil","The Diabolic Procession",2006,"The Diabolic Procession Bible of the Devil 2006"
+"The Replacements","Tim",1985,"Tim The Replacements 1985"
+"Baroness","Stone",2023,"Stone Baroness 2023"
+"Enslaved","Heimdal",2023,"Heimdal Enslaved 2023"
+"Ulver","The Assassination of Julius Caesar",2017,"The Assassination of Julius Caesar Ulver 2017"
+"Peter Gabriel","i/o",2023,"i/o Peter Gabriel 2023"
+"Television","Marquee Moon",1977,"Marquee Moon Television 1977"
+"Strand of Oaks","Heal",2014,"Heal Strand of Oaks 2014"
+"Heroes Del Silencio","Senderos De Traición",1990,"Senderos De Traición Heroes Del Silencio 1990"
+"Opeth","Ghost Reveries",2005,"Ghost Reveries Opeth 2005"
+"Pantera","Far Beyond Driven",1994,"Far Beyond Driven Pantera 1994"
+"Dream Troll","Realm of the Tormentor",2021,"Realm of the Tormentor Dream Troll 2021"
+"Protest the Hero","Volition",2013,"Volition Protest the Hero 2013"
+"The Dear Hunter","All is as All Should Be",2017,"All is as All Should Be The Dear Hunter 2017"
+"clipping.","Visions of Bodies Being Burned",2020,"Visions of Bodies Being Burned clipping. 2020"
+"Warren Zevon","Excitable Boy",1978,"Excitable Boy Warren Zevon 1978"
+"Steven Wilson","Hand Cannot Erase",2015,"Hand Cannot Erase Steven Wilson 2015"
+"Nevermore","Dreaming Neon Black",1999,"Dreaming Neon Black Nevermore 1999"
+"Militarie Gun","Life Under the Gun",2023,"Life Under the Gun Militarie Gun 2023"
+"Gang of Youths","Go Farther in Lightness",2017,"Go Farther in Lightness Gang of Youths 2017"
+"Guilt Machine","On This Perfect Day",2009,"On This Perfect Day Guilt Machine 2009"
+"John Williams","Jurassic Park",1993,"Jurassic Park John Williams 1993"
+"Corrosion of Conformity","America's Volume Dealer",2000,"America's Volume Dealer Corrosion of Conformity 2000"
+"In Flames","Soundtrack To Your Escape",2004,"Soundtrack To Your Escape In Flames 2004"
+"SACRED OUTCRY","Damned for all Time",2020,"Damned for all Time SACRED OUTCRY 2020"
+"Soundgarden","Down on the Upside",1996,"Down on the Upside Soundgarden 1996"
+"Rainbow","Rising",1976,"Rising Rainbow 1976"
+"Clutch","Sunrise On Slaughter Beach",2022,"Sunrise On Slaughter Beach Clutch 2022"
+"Deep Purple","Burn",1974,"Burn Deep Purple 1974"
+"CKY","Infiltrate-Destory-Rebuild",2002,"Infiltrate-Destory-Rebuild CKY 2002"
+"Frank Turner","Positive Songs for Negative People",2015,"Positive Songs for Negative People Frank Turner 2015"
+"Machine Head","The Burning Red",1999,"The Burning Red Machine Head 1999"
+"Thy Catafalque","Naiv",2020,"Naiv Thy Catafalque 2020"
+"In Flames","Whoracle",1997,"Whoracle In Flames 1997"
+"Genesis","We Can't Dance",1991,"We Can't Dance Genesis 1991"
+"Turisas","Battle Metal",2004,"Battle Metal Turisas 2004"
+"Warren Zevon","Warren Zevon",1976,"Warren Zevon Warren Zevon 1976"
+"HEALTH","VOL. 4 :: SLAVES OF FEAR",2019,"VOL. 4 :: SLAVES OF FEAR HEALTH 2019"
+"CHVRCHES","Every Open Eye",2015,"Every Open Eye CHVRCHES 2015"
+"Queensrÿche","Operation: Mindcrime",1988,"Operation: Mindcrime Queensrÿche 1988"
+"Alvvays","Alvvays",2014,"Alvvays Alvvays 2014"
+"Carly Rae Jepsen","Emotion",2015,"Emotion Carly Rae Jepsen 2015"
+"Avantasia","The Metal Opera, Pt. I",2001,"The Metal Opera, Pt. I Avantasia 2001"
+"Amorphis","Skyforger",2009,"Skyforger Amorphis 2009"
+"Judas Priest","Defenders of the Faith",1984,"Defenders of the Faith Judas Priest 1984"
+"Judas Priest","Painkiller",1990,"Painkiller Judas Priest 1990"
+"Judas Priest","Firepower",2018,"Firepower Judas Priest 2018"
+"Judas Priest","Turbo 30",1986,"Turbo 30 Judas Priest 1986"
+"Judas Priest","Ram it Down",1988,"Ram it Down Judas Priest 1988"
+"Judas Priest","Point of Entry",1981,"Point of Entry Judas Priest 1981"
+"Judas Priest","Rocka Rolla",1974,"Rocka Rolla Judas Priest 1974"
+"Judas Priest","Redeemer of Souls",2014,"Redeemer of Souls Judas Priest 2014"
+"Judas Priest","Invincible Shield",2024,"Invincible Shield Judas Priest 2024"

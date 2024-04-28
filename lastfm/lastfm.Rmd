@@ -110,7 +110,7 @@ scr_tal %>% left_join(., sheet %>% select(a1, a2) %>% mutate(b = "x"), by = c("a
 # added_n %>% filter(artist == "Judas Priest") %>% select(1:4) %>% write.csv("jp_albums.csv")
 
 # jpa <- read.csv("../ranker/jp_albums.csv")
-# added_n %>% filter(Tier %in% 1:3) %>% sample_n(200) %>% select(1:4) %>% bind_rows(., jpa) %>% distinct() %>% write.csv("../ranker/jp_albums.csv")
+# added_n %>% filter(Tier %in% 1:3) %>% sample_n(200) %>% select(1:4) %>% bind_rows(., jpa) %>% distinct() %>% write.csv("../ranker/jp_albums.csv", rownames = FALSE)
 # added_n %>% count(artist, album, sort = TRUE)
 ```
 

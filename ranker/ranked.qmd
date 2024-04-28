@@ -117,7 +117,7 @@ rsconnect::deployApp("/Users/joshdeclercq/Documents/GitHub/musicology/ranker")
 ```{r}
 jp <-  read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order") 
 
-jpr <- jp %>%rename(id =trial, album = order) %>% group_by(id) %>% mutate(value = n():1)
+jpr <- jp %>%rename(id =trial) %>% group_by(id) %>% mutate(value = n():1)
 
 jjj <- contest_fun2(jpr) %>% filter(x ==1) %>% 
   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
@@ -192,14 +192,33 @@ jpjp <- broom::tidy(jpmod, conf.int = TRUE, exp = TRUE) %>% arrange(desc(estimat
 ```
 
 ```{r}
-jp <- read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
+jp <- read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")#, col_types = "iTTccdc")
 
+jpa <- read.csv("jp_albums.csv")
 count(jpa, album) %>% filter(n >1)
 
-jp %>% filter(order %nin% c("Memorial", "Palomino")) %>% 
-  left_join(., jpa, by = c("order" = "album")) %>% 
-  select(-X, -Order) %>% rename(album = order) %>% 
-  mutate(order = paste(album, artist, Year, sep = "\n"))
-Sys.time()
+jpa %>% group_by(album) %>% mutate(n = n()) %>% filter(n > 1)
+
+##Used to fix sheets
+# jp %>% filter(order %nin% c("Memorial", "Palomino")) %>% 
+#   left_join(., jpa, by = c("order" = "album")) %>% 
+#   rename(album = order, order = order.y) %>% 
+#   write_sheet(., "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
+
+# jp %>% mutate(order = gsub("\n", " ", order))%>%
+#    write_sheet(., "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
+
+## add new albums for ranking
+# added_n %>% filter(Tier %in% 1:3) %>% sample_n(200) %>% select(2:4) %>%
+#   mutate(order = paste(album, artist, Year, sep = " ")) %>% 
+#   bind_rows(., jpa) %>% distinct() %>%
+#   write.csv(., "jp_albums.csv", row.names = FALSE)
+
+# jpa %>% select(-Order) %>% distinct() %>% write.csv(., "jp_albums.csv", row.names = FALSE)
+
+
+
+gg <- gen_jp_labels(tt)
+htmltools::div( htmltools::strong("Lucifer on the Sofa"), htmltools::br(), "Spoon", htmltools::br(),paste0("(", "2022", ")"))
 ```
 
