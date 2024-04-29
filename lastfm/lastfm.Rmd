@@ -131,22 +131,32 @@ build_artist_toptags_query <- function(artist, api_key = "af685b724bb505055968e9
 fetch_artist_toptags <- function(artist) {
   # print(paste0("Fetching ", artist))
   json <- jsonlite::fromJSON(build_artist_toptags_query(artist))
-  if (length(json$toptags$tag) == 0) return(NA)
+  if (length(json$toptags$tag) == 0) return(data.frame(artist = artist, tag = NA))
   x <- data.frame(artist = artist, tag = json$toptags$tag[,"name"]) %>% 
     mutate(tag = tolower(tag), tag = gsub("-", " ", tag)) %>% distinct()
   
   return(x)
 }
 
-arts <- added_n %>% filter(n >100) %>% pull(artist) %>% unique()
+Load(art_tags)
 
-art_tags <- map(arts, fetch_artist_toptags) %>% list_rbind()
+  add_arts <- added_n %>% filter(n > 0, artist %nin% art_tags$artist) %>% pull(artist) %>% unique()
+  add_art_tags <- map(add_arts, fetch_artist_toptags) %>% list_rbind()
+  art_tags <- bind_rows(art_tags, add_art_tags)
+  
+Save(art_tags)
 
-art_tags %>% group_by(tag) %>% mutate(n = n()) %>% filter(n >5)
 
-art_tags %>% count(tag, sort = TRUE)
+# art_tags %>% group_by(tag) %>% mutate(n = n()) %>% filter(n >5)
 
-fetch_artist_toptags("Soul Glo")
+# art_tags %>% count(tag, sort = TRUE)%>% filter(n >=9) %>% write.csv("genres.csv", row.names = FALSE)
+
+art_tags %>% group_by(artist) %>% slice(1)%>% ungroup() %>% count(tag, sort = TRUE)
+
+art_tags %>% group_by(artist) %>% slice(1) %>% ungroup( ) %>% select(tag) %>% jgt(., order.cat = TRUE)
+
+art_tags %>% filter(tag %in% "horror punk")
+fetch_artist_toptags("Joan Jett" )
 ```
 
 ## Albums

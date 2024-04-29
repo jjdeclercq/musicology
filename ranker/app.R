@@ -1,4 +1,4 @@
-## Example shiny app with rank list
+
 
 library(shiny)
 library(sortable)
@@ -47,8 +47,8 @@ jp <- read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_o
 jpa %<>% left_join(., 
                   jp %>% count(order),
                   by = c( "order")) %>% 
-  mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))), p = p^2) %>% 
-  mutate(order = gsub("\n", " ", order))
+  mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))), q = rank(p), qr = q/max(q))
+         # p = p^2) 
 
 
 
@@ -61,10 +61,13 @@ ui <- fluidPage(
         type = "tabs",
         tabPanel(
           "Default",
-          column(4, uiOutput("sortable")),
+          column(4, 
+                 selectizeInput("jp_album", "Album", jpa$album, selected = NULL, multiple = T, options = NULL),
+                 selectizeInput("jp_artist", "Artist", jpa$artist, selected = NULL, multiple = T, options = NULL),
+                 uiOutput("sortable"),
+                 actionButton("btnSubmit", label = "Submit rankings"),
+                 actionButton("btnReset", label = "Reset albums"),),
           column(8, reactableOutput("jp_table")),
-          actionButton("btnSubmit", label = "Submit rankings"),
-          actionButton("btnReset", label = "Reset albums"),
           verbatimTextOutput("results_basic")
         )
 
@@ -77,7 +80,8 @@ server <- function(input, output, session) {
   
   rv <- reactiveValues(order = init_albums$order, 
                        albums = init_albums,
-                       rankings = jp)
+                       rankings = jp,
+                       jpa = jpa)
   
 
   output$jp_table <- renderReactable({
@@ -89,13 +93,13 @@ server <- function(input, output, session) {
     rv$order <- input$rank_list_basic
 
     rv$albums <- left_join(data.frame(order = rv$order),
-                           jpa,
+                           rv$jpa,
                            by = "order")
   })
 
   output$sortable <- renderUI({
     rank_list_basic <- rank_list(
-      text = "Rank albums",
+      text = "choose.",
       labels =  gen_jp_labels(rv$albums),
       input_id = "rank_list_basic"
     )
@@ -104,6 +108,18 @@ server <- function(input, output, session) {
   output$results_basic <- renderPrint({
     input$rank_list_basic # This matches the input_id of the rank list
   })
+  observeEvent(
+    c(input$jp_album, input$jp_artist),
+    
+    if(!is.null(input$jp_album)){
+    rv$jpa %<>% mutate(p = ifelse(album %in% input$jp_album & p < 1, 1000*p, p))
+    }
+    
+    else if(!is.null(input$jp_artist)){
+      rv$jpa %<>% mutate(p = ifelse(artist %in% input$jp_artist & p < 1, 100*p, p))
+    }
+    
+  )
   
   
   observeEvent(input$btnSubmit, {
@@ -112,18 +128,16 @@ server <- function(input, output, session) {
       select(trial,date, album, artist, Year, order)
     
     rv$rankings <- rbind(rv$rankings,new_rank_rows )
-    # write.csv(rv$rankings , "jp.csv", row.names = FALSE)
 
-    # write_sheet(rv$rankings, "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
     sheet_append(data =new_rank_rows, ss = "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
 
-     rv$albums <- sample_n(jpa, 5, weight = p)
+     rv$albums <- sample_n(rv$jpa, 5, weight = p)
     
   }, ignoreInit = FALSE)
   
   observeEvent(input$btnReset, {
     
-    rv$albums <- sample_n(jpa, 5, weight = p)
+    rv$albums <- sample_n(rv$jpa, 5, weight = p)
     
   }, ignoreInit = FALSE)
 

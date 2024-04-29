@@ -117,12 +117,13 @@ rsconnect::deployApp("/Users/joshdeclercq/Documents/GitHub/musicology/ranker")
 ```{r}
 jp <-  read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order") 
 
-jpr <- jp %>%rename(id =trial) %>% group_by(id) %>% mutate(value = n():1)
+jpr <- jp %>%rename(id =trial) %>% group_by(id) %>% mutate(value = n():1) %>% select(-album) %>% 
+  rename(album = order)
 
 jjj <- contest_fun2(jpr) %>% filter(x ==1) %>% 
   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
 
-jpmod <- BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", refcat = "Firepower",
+jpmod <- BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", #refcat = "Firepower",
              data = jjj )#%>% filter(player1 %nin% c("Painkiller", "Screaming for Vengeance")) %>% 
                #filter(player2 %nin% c("Painkiller", "Screaming for Vengeance")))
 
@@ -134,21 +135,28 @@ jp_wl %>% count(item2, name = "loss"), by = c("item" = "item2")) %>%
   left_join(., 
             BTabilities(jpmod) %>% data.frame() %>% arrange(desc(ability)) %>% 
               tibble::rownames_to_column("item") %>% select(1,2), by= "item") %>% 
-  mutate(ability = round(exp(ability), 4)) %>% arrange(desc(ability)) %>% mutate(a_rank = 1:n()) %>% 
-  arrange(desc(pct)) %>% mutate(wl_rank = 1:n()) %>% arrange(a_rank) 
+  mutate(ability = round(ability, 4)) %>% filter(matches >50) %>% 
+  arrange(desc(ability)) %>% mutate(a_rank = 1:n()) %>% 
+  arrange(desc(pct)) %>% mutate(wl_rank = 1:n()) %>% arrange(a_rank)
+
+j.reactable(rank_table)
+```
 
 
-  j.reactable(rank_table %>% filter(matches >20))
+```{r}
 
-#   iii <- contest_fun2(jpr) %>% filter(x ==1) %>% 
+  
+# 
+#   iii <- contest_fun2(jpr) %>% filter(x ==1) %>%
 #   select(-x) %$% xtabs(~item +item2)
-#   
-# inspect<-  c("Sin After Sin", "Painkiller", "Firepower", "Screaming for Vengeance")
+# #   
+# inspect<-  c("Go Farther in Lightness Gang of Youths 2017", "Fair Warning Van Halen 1981", "Rising Rainbow 1976", "Screaming for Vengeance Judas Priest 1982")
 # 
 # iii[inspect, inspect] %>% countsToBinomial()
+# # 
 # 
-# list.files()
-  added_n %>% count(album) %>% filter(n >1)
+#   
+#   added_n %>% filter(Tier %in% c(1:4)) %>% count(Status)
 ```
 
 
@@ -220,5 +228,12 @@ jpa %>% group_by(album) %>% mutate(n = n()) %>% filter(n > 1)
 
 gg <- gen_jp_labels(tt)
 htmltools::div( htmltools::strong("Lucifer on the Sofa"), htmltools::br(), "Spoon", htmltools::br(),paste0("(", "2022", ")"))
+
+
+jpa %>% left_join(., 
+                  jp %>% count(order),
+                  by = c( "order")) %>% 
+  mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))), p = p^2, q = rank(p), qr = q/max(q)) %>% arrange(qr)
+
 ```
 
