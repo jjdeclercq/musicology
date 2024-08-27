@@ -31,11 +31,31 @@ require(htmltools)
 require(readxl)
 require(ggbeeswarm)
 library(scrobbler)
+
+options(
+  gargle_oauth_cache = ".secrets",
+  gargle_oauth_email = TRUE
+)
+
+# now use googledrive with no need for explicit auth
+gs4_auth(
+  cache = ".secrets",
+  email = "jjdeclercq@gmail.com"
+)
+
+clean.tracks <- function(dat){
+  dat %>% separate(track, into = c("track", "junk"), sep = " - ")%>% 
+  separate(., track, into = c("track", "extra2"), sep = " \\[", fill = "right") %>% 
+  separate(., track, into = c("track", "extra"), sep = " \\(", fill = "right")
+  
+}
+
+fix_albums <- read_sheet("1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "fix_albums")
+fix_artists <- read_sheet("1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "fix_artists")
+
 ```
 
 ```{r}
-fix_albums <- read_sheet("1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "fix_albums")
-fix_artists <- read_sheet("1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "fix_artists")
 
 # scrobbles <- lastfmR::get_scrobbles(user = "jjdeclercq")
 
@@ -57,8 +77,12 @@ scr_long <- jj_scrobb %>% mutate(date = ymd(strptime(gsub(",.*", "", date), form
   mutate(a2 = tolower(album), a2 = stri_trans_general(a2, 'latin-ascii')) %>% select(-extra, -extra2, -fix.a, -fix) %>% 
   rename(track = song_title)
 
-scr_tal <- scr_long %>%  group_by(a1, a2) %>% 
- summarise(artist = first(artist), album = first(album), n = n(), 
+scr_tal <- scr_long %>%  group_by(a1, a2) %>% clean.tracks() %>% 
+ summarise(artist = first(artist), album = first(album), 
+           n = n(), 
+           n_ytd = sum(date >= ymd("2024.01.01"), na.rm = TRUE), 
+           n_365 = sum(date >= (today()-days(365)), na.rm = TRUE), 
+           n_30 = sum(date >= (today()-days(30)), na.rm = TRUE),
            last_played = max(date, na.rm = TRUE), tracks = n_distinct(track), 
            .groups = "drop")
 
@@ -66,17 +90,34 @@ scr_tal <- scr_long %>%  group_by(a1, a2) %>%
 
 sheet <- read_sheet("1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "All")%>% mutate(artist = trimws(artist)) %>% 
   mutate(a1 = tolower(artist), a1 = stri_trans_general(a1, 'latin-ascii')) %>% 
-  mutate(a2 = tolower(album), a2 = stri_trans_general(a2, 'latin-ascii')) %>% select(-n)
+  mutate(a2 = tolower(album), a2 = stri_trans_general(a2, 'latin-ascii')) %>% select(-n, -starts_with("n_"))
 
 
-added_n <- left_join(sheet %>% select(-last_played), scr_tal %>% select(-artist, -album), by = c("a1", "a2")) %>% 
+added_n <- left_join(sheet %>% select(-last_played, -tracks), scr_tal %>% select(-artist, -album), by = c("a1", "a2")) %>% 
   select(-a1, -a2) %>% 
-  mutate(n = replace_na(n, 0)) %>% select(Order, artist, album, Year, Status, n, last_played, Rank, Tier, within_year, `all timer`)
+  mutate(n = replace_na(n, 0)) %>% mutate(play_ratio = round(n/tracks, 1)) %>% 
+  select(Order, artist, album, Year, Status, n, play_ratio, tracks,
+                                          last_played,a_rank,p_rank, ranker,matches,starts_with("n_"), Rank, Tier, within_year) %>% 
+  arrange(a_rank, Status, desc(play_ratio), Year)
 
 # Will add number of scrobbles
 write_sheet(added_n, "1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "All")
 
+# jj_scrobb %>% mutate(date = ymd(strptime(gsub(",.*", "", date), format = "%d %b %Y"))) %>% 
+#   group_by(artist, album) %>% 
+#   separate(., album, into = c("album", "extra2"), sep = " \\[", fill = "right") %>% 
+#   separate(., album, into = c("album", "extra"), sep = " \\(", fill = "right") %>% 
+#   left_join(., fix_artists,  by = c("artist")) %>% ungroup() %>% slice(14548)
 
+# added_n %>% filter(Status == "Keep", is.na(a_rank)) %>% j.reactable()
+# 
+# added_n %>% mutate(Status = case_when(!is.na(a_rank) ~ "Ranked", 
+#                                  Status == "Keep"& is.na(a_rank) ~ "Add",
+#                                  Status == "Borrowed"& is.na(a_rank) ~ "Drop",
+#                                  Status == "Compilation"& is.na(a_rank) ~ "Songs",
+#                                  Status == "Sample"& is.na(a_rank) ~ "Homework",
+#                                  TRUE ~ Status)) %>% arrange(a_rank, Status, desc(play_ratio), Year) %>% 
+#   write_sheet(., "1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "All")
 ```
 
 
@@ -86,7 +127,10 @@ write_sheet(added_n, "1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "Al
 ```{r}
 scr_long %>% select(1:5) %>% head(50) %>% j.reactable()
 
-scr_long %>% group_by(a1, a2, track) %>% summarise(n = n()) %>% arrange(desc(n)) %>% j.reactable()
+
+
+scr_long %>% clean.tracks() %>% 
+  group_by(a1, a2, track) %>% summarise(n = n()) %>% arrange(desc(n)) %>% j.reactable()
 ```
 
 ```{r}
@@ -101,6 +145,8 @@ scr_long %>% group_by(a1, a2, track) %>% summarise(n = n()) %>% arrange(desc(n))
 ## 78.8  12/21
 ## 78.9  1/31/24
 ## 79.2 4/17/24
+## 81.2 4/30/24
+
 
 scr_tal %>% left_join(., sheet %>% select(a1, a2) %>% mutate(b = "x"), by = c("a1", "a2")) %>% 
   mutate(b = replace_na(b, "y")) %>% 
@@ -112,6 +158,11 @@ scr_tal %>% left_join(., sheet %>% select(a1, a2) %>% mutate(b = "x"), by = c("a
 # jpa <- read.csv("../ranker/jp_albums.csv")
 # added_n %>% filter(Tier %in% 1:3) %>% sample_n(200) %>% select(1:4) %>% bind_rows(., jpa) %>% distinct() %>% write.csv("../ranker/jp_albums.csv", rownames = FALSE)
 # added_n %>% count(artist, album, sort = TRUE)
+
+j.reactable(added_n, filterable = TRUE)
+added_n %>% filter(is.na(a_rank)) %>% j.reactable(., filterable = TRUE)
+
+added_n[grepl(paste(as.character(NULL),collapse="|"), added_n$artist),]
 ```
 
 ```{r}
@@ -142,7 +193,7 @@ Load(art_tags)
 
   add_arts <- added_n %>% filter(n > 0, artist %nin% art_tags$artist) %>% pull(artist) %>% unique()
   add_art_tags <- map(add_arts, fetch_artist_toptags) %>% list_rbind()
-  art_tags <- bind_rows(art_tags, add_art_tags)
+  art_tags <- bind_rows(art_tags, add_art_tags) %>% distinct()
   
 Save(art_tags)
 
@@ -157,6 +208,45 @@ art_tags %>% group_by(artist) %>% slice(1) %>% ungroup( ) %>% select(tag) %>% jg
 
 art_tags %>% filter(tag %in% "horror punk")
 fetch_artist_toptags("Joan Jett" )
+
+genres <- read.csv("genres.csv") %>% filter(use ==1)
+
+vcg <- art_tags %>% filter(tag %in% genres$tag) %>% mutate(x = 1) %>% pivot_wider(., names_from = "tag", values_from = x, values_fill = 0) %>% 
+  select(-artist) %>% as.matrix() %>% varclus()
+
+# plot(vcg)
+
+art_tags %>% filter(tag %in% c("country", "metal"))
+
+AT <- art_tags %>% filter(tag %in% genres$tag) %>% group_by(artist) %>% slice(1:4) %>% filter(tag %in% genres$tag)%>% mutate(x = 1) %>% 
+  pivot_wider(., names_from = "tag", values_from = x, values_fill = 0) %>% ungroup()
+
+
+AT %>% 
+  filter(`alt country` == 1, `thrash` ==0) %>% 
+  select(artist) %>% left_join(., added_n, by = "artist") %>% arrange(a_rank, desc(play_ratio)) %>% 
+  j.reactable()
+
+
+AT %>% rowwise() %>%
+  mutate(G = sum(across(where(is.numeric)))) %>% select(1, G) %>% arrange(G)
+
+added_n %>% group_by(Year)%>% 
+   arrange(a_rank) %>% 
+  summarise(albums = n(), plays = sum(n, na.rm = TRUE), 
+            tracks = sum(tracks, na.rm = TRUE), 
+            last_played = max(last_played, na.rm = TRUE),
+            ranked_albums = sum(!is.na(a_rank)), 
+            top100 = sum(a_rank <= 100, na.rm = TRUE), 
+            top250 = sum(a_rank <= 250, na.rm = TRUE),
+            mean3 = ifelse(ranked_albums >=3, floor(mean(head(a_rank, 3))), NA),
+            keep = sum(Status == "Keep"),
+            blue = sum(Status == "Blue"),
+            homework = sum(Status == "Homework")) %>% j.reactable()
+
+AT %>% 
+   left_join(added_n, ., by = "artist") %>% arrange(a_rank, desc(play_ratio)) %>% select(indie:last_col()) %>% 
+  summarise_all(~sum(.x, na.rm = TRUE)) %>% mutate(g = 1) %>% pivot_longer(., -g) %>% select(-g) %>% arrange(desc(value))
 ```
 
 ## Albums
@@ -168,6 +258,14 @@ scr_tal %>% left_join(., sheet %>% select(a1, a2) %>% mutate(b = "x"), by = c("a
   mutate(plays = x + y) %>% 
   j.reactable()
 
+
+# scr_tal %>% left_join(., sheet %>% select(a1, a2) %>% mutate(b = "x"), by = c("a1", "a2")) %>% 
+#   mutate(b = replace_na(b, "y")) %>% #rename(album = a2, artist = a1) %>% 
+#   group_by(album, artist, b, last_played) %>% summarise(n = sum(n)) %>% 
+#   pivot_wider(., names_from = "b", values_from = "n", values_fill = 0) %>% 
+#   mutate(plays = x + y) %>% filter(y > 30) %>% select(artist, album) %>% clipr::write_clip()
+
+# scr_tal %>% filter(album == "Encanto")%>% select(artist, album) %>% clipr::write_clip()
 ```
 
 ## Artists
@@ -181,6 +279,17 @@ scr_tal %>% left_join(., sheet %>% select(a1, a2) %>% mutate(b = "x"), by = c("a
   mutate(plays = x + y, ppt = round(plays/tracks, 1)) %>% 
   j.reactable()
 
+```
+
+
+# 2024 listening
+```{r}
+scr_long %>%  group_by(a1, a2) %>% clean.tracks() %>% #filter(date >= ymd("2024.01.01")) %>% 
+ summarise(artist = first(artist), album = first(album), 
+           n_ytd = sum(date >= ymd("2024.01.01")), 
+           n_365 = sum(date >= (today()-days(365))), 
+           n_30 = sum(date >= (today()-days(30))), 
+           .groups = "drop") %>% j.reactable()
 ```
 
 ```{r}
@@ -212,6 +321,10 @@ scr_tal %>% left_join(., sheet %>% select(a1, a2) %>% mutate(b = "x"), by = c("a
 ```
 
 
+```{r}
+ggplotly(added_n %>% filter(!is.na(a_rank)) %>% mutate(t = as.numeric(today()-last_played)/365) %>% 
+  ggplot(., aes(x = a_rank, y = t, label = album)) +geom_point())
+```
 
 
 ```{r}
@@ -271,6 +384,8 @@ ggplotly(added_n %>% group_by(Year) %>% summarise(n = n()) %>%
 
 ggplotly(added_n %>% filter(n == 0) %>% group_by(Year) %>% summarise(n = n()) %>%
   ggplot(., aes(x = Year, y = n)) +geom_bar(stat = "identity"))
+
+added_n %>% filter(n == 0) %>% j.reactable()
 ```
 
 ## Play ratio by year
@@ -283,6 +398,19 @@ ggplotly(added_n %>% group_by(Year) %>% summarise(albums = n(), n = sum(n)) %>%
 added_n %>% group_by(Year) %>% summarise(albums = n(), n = sum(n)) %>%
            mutate(ratio = n/albums) %>% j.reactable()
 ```
+
+## Rank by year
+```{r}
+added_n %>% filter(!is.na(a_rank)) %>% group_by(Year) %>% arrange(a_rank) %>% slice(1:5) %>%
+  ggplot(., aes( x = Year, y = a_rank)) +geom_point() +geom_smooth()
+
+added_n %>% filter(!is.na(a_rank)) %>% group_by(Year) %>% arrange(a_rank) %>% slice(1:5) %>% group_by(Year) %>% 
+  summarise(n = n(), m = mean(a_rank)) %>% filter(n == 5) %>% arrange(m)
+
+ggplotly(added_n %>% filter(!is.na(a_rank)) %>% group_by(Year) %>% arrange(a_rank) %>% slice(1) %>% 
+  ggplot(., aes(x= Year, y = a_rank, text = album)) + geom_point())
+```
+
 
 ```{r}
 # ## remove parenthesis
@@ -336,13 +464,15 @@ scrobbles %>% filter(grepl("Inside Room", album))%>% arrange(date) %>% mutate(so
 # 
 # scr_lib %>% mutate(ratio = round(100*user_scrobbles/global_scrobbles, 4) )%>% arrange(desc(ratio))
 
-# edgelist <- get_similar('Blind Guardian')
+edgelist <- get_similar('Blind Guardian')
 # level2 <- rbindlist(lapply(
 #   edgelist[, To], get_similar
 # ))
 # edgelist <- rbindlist(list(edgelist, level2))
 # 
 # edgelist %>% filter(match == 1)
+
+edgelist %>% filter(To %in% added_n$artist)
 ```
 
 ```{r}
@@ -383,13 +513,23 @@ songs %>% group_by(a1, a2, track_name) %>% tally() %>% filter(n > 1)
 
 # Artist trajectories
 ```{r}
-scrobbles %>% filter(artist %in% c(#"Katatonia",  "Carly Rae Jepsen", "Blind Guardian",  
-  "The Replacements", "Gang of Four",
-                                   "Savatage", "The Cure", 
-                                   "Protest the Hero",  "Rush",  "New Model Army") ) %>% 
+artist_traj <- function(ARTISTS){
+  
+  ggplotly(scr_long %>% filter(artist %in% ARTISTS) %>% 
   mutate(date = as.Date(date)) %>% arrange(date) %>% group_by(artist, date) %>% tally() %>% 
   group_by(artist) %>% mutate(N = cumsum(n)) %>% 
-  ggplot(., aes(x = date, y = N, colour = artist)) +geom_step()
+  ggplot(., aes(x = date, y = N, colour = artist)) +geom_step())
+  
+}
+
+
+att <- c("Katatonia",  "Carly Rae Jepsen", "Blind Guardian",  
+  "The Replacements", "Gang of Four", "Judas Priest", "Elton John", "Warren Zevon", "Van Halen",
+                                   "Savatage", "The Cure", "Motörhead",
+                                   "Protest the Hero"#,  "Rush", "New Model Army", "Run the Jewels"
+  )
+
+artist_traj(att)
 ```
 
 ```{r}
@@ -402,13 +542,38 @@ added_n %>% filter(Tier == 1) %>% filter(Order %in% sample(Order, 4, TRUE))
 ```
 
 
-```{r}
-tha <- read_xlsx("/Users/joshdeclercq/Downloads/NPI File_3.29.24.xlsx", sheet = 1) %>% mutate(source = "tha")
-epsi <- read_xlsx("/Users/joshdeclercq/Downloads/NPI File_3.29.24.xlsx", sheet = 2) 
+
+```{r eval = FALSE}
+
+## Spotify API
+devtools::install_github('charlie86/spotifyr')
+require(spotifyr)
+
+# https://developer.spotify.com/dashboard/76290730fe0d45d88d925789ea5306b1
+
+Sys.setenv(SPOTIFY_CLIENT_ID = '76290730fe0d45d88d925789ea5306b1')
+Sys.setenv(SPOTIFY_CLIENT_SECRET = 'copy from website above')
+
+access_token <- get_spotify_access_token()
 
 
-left_join(tha, epsi, by = "Attending NPI") %>% write.csv(., "wink.csv")
+baroness <- get_artist_audio_features('baroness')
 
-left_join(epsi, tha %>% select(1, source), by = "Attending NPI") %>% write.csv(., "wink2.csv")
+baroness %>% 
+    count(key_mode, sort = TRUE) %>% 
+    head(5)
+
+get_album("7mv4FQrLiyJWLDazVNZzTi")
 ```
+
+
+<!-- ```{r} -->
+<!-- tha <- read_xlsx("/Users/joshdeclercq/Downloads/NPI File_3.29.24.xlsx", sheet = 1) %>% mutate(source = "tha") -->
+<!-- epsi <- read_xlsx("/Users/joshdeclercq/Downloads/NPI File_3.29.24.xlsx", sheet = 2)  -->
+
+
+<!-- left_join(tha, epsi, by = "Attending NPI") %>% write.csv(., "wink.csv") -->
+
+<!-- left_join(epsi, tha %>% select(1, source), by = "Attending NPI") %>% write.csv(., "wink2.csv") -->
+<!-- ``` -->
 

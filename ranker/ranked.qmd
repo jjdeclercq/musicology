@@ -76,7 +76,7 @@ devtools::source_url("https://raw.githubusercontent.com/jjdeclercq/VUMisC/main/J
 
 
 contest_fun2 <- function(dat){
-    cc <- data_frame()  
+    cc <- data.frame()  
     
     IDs <- unique(dat$id)
     
@@ -102,6 +102,38 @@ contest_fun2 <- function(dat){
      return(cc)
 }
 
+
+contest_fun3 <- function(dat){
+  
+   cc <- data.frame()  
+    
+    IDs <- unique(dat$id)
+    
+    for(j in 1:length(IDs)){
+    
+        mxc <- dat %>% filter(id == IDs[j]) %>% arrange(desc(value)) %>% pull(album)
+        
+        bb <- data.frame()
+        for(i in 1:(length(mxc)-1)){
+              if(i ==1) bb <- mxc[i] %>>% mxc[i+1]
+              else bb <- bb %>>%  mxc[i+1]
+              
+            }
+        egg <- expand.grid(item = unique(c(bb$item, bb$item2)), item2 = unique(c(bb$item, bb$item2)))
+        
+          bb %<>% arrange(item2) %>% distinct() %>% mutate(x = 1) %>% 
+          full_join(., egg, by = c("item", "item2")) %>% 
+          mutate(x = replace_na(x, 0))%>% filter(x ==1)%>% 
+            select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+         
+          cc <- bind_rows(cc, bb)
+    }
+    
+    cc%>% arrange(player1, player2) %>% 
+  group_by(player1, player2) %>% 
+  summarise(win1 = sum(win1), win2 = sum(win2))
+  
+}
 ```
 
 ```{r}
@@ -113,33 +145,148 @@ rsconnect::deployApp("/Users/joshdeclercq/Documents/GitHub/musicology/ranker")
 ```
 
 
-
 ```{r}
+a <- Sys.time()
 jp <-  read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order") 
 
 jpr <- jp %>%rename(id =trial) %>% group_by(id) %>% mutate(value = n():1) %>% select(-album) %>% 
   rename(album = order)
 
-jjj <- contest_fun2(jpr) %>% filter(x ==1) %>% 
-  select(-x) %$% xtabs(~item +item2) %>% countsToBinomial()
+jpr %>% count(id, sort = TRUE) %>% filter(n >5)
+
+JJJ <- contest_fun3(jpr)
+
 
 jpmod <- BTm(cbind(win1, win2), player1, player2, ~ player, id = "player", #refcat = "Firepower",
-             data = jjj )#%>% filter(player1 %nin% c("Painkiller", "Screaming for Vengeance")) %>% 
-               #filter(player2 %nin% c("Painkiller", "Screaming for Vengeance")))
+             data = JJJ )
 
-jp_wl <- contest_fun2(jpr)%>% filter(x ==1)
 
-rank_table <- full_join(jp_wl %>% count(item, name = "win"), 
-jp_wl %>% count(item2, name = "loss"), by = c("item" = "item2")) %>%
-  mutate(loss =replace_na(loss, 0),win =replace_na(win, 0), matches = win +loss, pct = round(win/matches, 4)) %>% 
+
+rank_table <- bind_rows(JJJ %>% group_by(player1) %>% 
+                          summarise(win = sum(win1), loss = sum(win2)) %>% rename(item = player1),
+          JJJ %>% group_by(player2) %>% 
+            summarise(win = sum(win2), loss = sum(win1)) %>% rename(item = player2)) %>% 
+  group_by(item) %>% summarise_all(sum) %>% mutate( matches = win +loss, pct = round(win/matches, 4)) %>% 
   left_join(., 
             BTabilities(jpmod) %>% data.frame() %>% arrange(desc(ability)) %>% 
               tibble::rownames_to_column("item") %>% select(1,2), by= "item") %>% 
-  mutate(ability = round(ability, 4)) %>% filter(matches >50) %>% 
-  arrange(desc(ability)) %>% mutate(a_rank = 1:n()) %>% 
-  arrange(desc(pct)) %>% mutate(wl_rank = 1:n()) %>% arrange(a_rank)
+  mutate(ability = round(ability, 4), ra = yesno(matches >40)) %>% 
+  arrange(desc(ra), desc(ability)) %>% mutate(a_rank = 1:n(), a_rank = ifelse(ra == "Yes", a_rank, NA)) %>% 
+  arrange(desc(pct)) %>% mutate(wl_rank = 1:n()) %>% arrange(a_rank) %>% 
+  left_join(., jp %>% select(order, artist, album, Year) %>% distinct(), by = c("item" = "order") )
+```
 
+
+```{r}
 j.reactable(rank_table)
+
+system("say Boop a doop!")
+b <- Sys.time()
+b-a
+
+# j.reactable(JJJ)
+
+# JJJ %>% filter(win1 > 1 & win2 >1)
+
+
+```
+
+
+```{r}
+#| eval: false
+
+## Add bt ranks to big sheet
+sheet <- read_sheet("1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "All")
+
+left_join(sheet %>% select(-p_rank) %>% rename(p_rank = a_rank) %>% select(-matches) , 
+          rank_table %>% select(artist, album, Year, a_rank, matches), 
+          join_by(artist, album, Year)) %>% 
+  arrange(a_rank, Status, desc(play_ratio), Year)%>% 
+  group_by(Year) %>% mutate(within_year = ifelse(!is.na(a_rank), 1:n(), NA ), last_played = ymd(last_played)) %>% 
+  relocate(a_rank, .before = p_rank) %>% 
+  write_sheet(., "1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "All")
+
+left_join(sheet %>% select(-p_rank) %>% rename(p_rank = a_rank) %>% select(-matches) , 
+          rank_table %>% select(artist, album, Year, a_rank, matches), 
+          join_by(artist, album, Year)) %>% arrange(a_rank, matches) %>% 
+  mutate(d = p_rank-a_rank) %>% filter(!is.na(d)) %>% arrange(d) %>% select(artist, album, d)
+
+```
+
+```{r}
+#| eval: false
+
+## old method
+jp_wl <- contest_fun2(jpr)%>% filter(x ==1)
+
+# jjj <- jp_wl %>% slice(1:20000) %>% 
+#   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+# 
+# 
+# jjj2 <- jp_wl %>% slice(20001:25000) %>% 
+#   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+# 
+# jjj3 <- jp_wl %>% slice(25001:33000) %>% 
+#   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+# 
+# jjj4 <- jp_wl %>% slice(33001:38000) %>% 
+#   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+# 
+# jjj5 <- jp_wl %>% slice(38001:42000) %>% 
+#   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+# 
+# jjj6 <- jp_wl %>% slice(42000:46000) %>% 
+#   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+# 
+# jjj7 <- jp_wl %>% slice(46001:nrow(.)) %>% 
+#   select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)
+# 
+# 
+# 
+# 
+# JJJ <- bind_rows(jjj, jjj2, jjj3, jjj4, jjj5, jjj6, jjj7) %>% group_by(player1, player2) %>% 
+#   summarise(win1 = sum(win1), win2 = sum(win2))
+
+sdf <- data.frame(start = c(seq(1, nrow(jp_wl), 1000)), end = c(seq(1000, nrow(jp_wl), 1000), nrow(jp_wl)))
+  
+JJJ <- map2(sdf$start, sdf$end, ~jp_wl %>% slice(.x:.y) %>% 
+  select(-x) %$% xtabs(~item +item2) %>% countsToBinomial(.)) %>% 
+  list_rbind() %>% group_by(player1, player2) %>% 
+  summarise(win1 = sum(win1), win2 = sum(win2))
+```
+
+
+
+
+```{r}
+## add in new albums for rankification
+sheet <- read_sheet("1F1bi8Y12cnmyCnNB3HWpVdj9oi918ohHi7qBITB73Ks", sheet = "All")
+
+sheet %>% filter(ranker ==1 & is.na(p_rank))
+
+sheet %>% filter(is.na(ranker), Tier %in% 1:3)
+
+sheet %>% filter(artist %in% c("Steely Dan", "Blind Guardian", "Opeth", "Thin Lizzy", "Clutch"), !is.na(a_rank)) %>% 
+  # group_by(artist) %>% slice(1:5) %>% ungroup() %>% 
+  select(a_rank, artist) %>% jgt(., by = "artist", add.p = TRUE)
+
+
+sheet %>% filter(!is.na(ranker), a_rank < 200) %>% count(artist, sort = TRUE)
+
+require(survival)
+
+
+survminer::ggsurvplot(survfit(Surv(a_rank, ranker) ~ artist, data = sheet%>% filter(!is.na(ranker)) %>%
+          filter(artist %in% c("Steely Dan", "Blind Guardian", "Opeth", "Thin Lizzy", "Clutch"))), fun = "event")
+
+ee <- survfit(Surv(a_rank, ranker) ~ artist, data = sheet%>% filter(!is.na(ranker)) %>%
+          filter(artist %in% c("Steely Dan", "Iron Maiden")))
+
+broom::tidy(ee) %>% 
+  group_by(strata) %>% mutate(c.event = cumsum(n.event)) %>% 
+  ggplot(., aes(x = time, y = c.event, colour = strata)) +geom_step()
+
+
 ```
 
 
@@ -184,56 +331,52 @@ jpjp <- broom::tidy(jpmod, conf.int = TRUE, exp = TRUE) %>% arrange(desc(estimat
     geom_point() + #geom_errorbarh(aes(xmin = conf.low, xmax = conf.high), height = 0) +
     geom_vline(xintercept = 1, linetype = 3) +
   scale_x_continuous(trans='log', breaks = c(0.0125, 0.25, 1,  4,  16, 64))
-  
-# rsconnect::deployApp("/Users/joshdeclercq/Documents/GitHub/musicology/ranker")
-  
-  # jpa <- read.csv("../ranker/jp_albums.csv")
-  # 
-  # jpa %<>% left_join(., 
-  #                    jp %>% count(order),
-  #                   by = c("album" = "order")) %>% 
-  #   mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))))
-  # 
-  # sample_n(jpa, 5, weight = p)
+
   
 
+  
+added_n %>% filter(Status == "Keep", !is.na(Tier)) %>% count(Tier)
 ```
 
 ```{r}
-jp <- read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")#, col_types = "iTTccdc")
+jp <- read_sheet("1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
 
 jpa <- read.csv("jp_albums.csv")
 count(jpa, album) %>% filter(n >1)
 
 jpa %>% group_by(album) %>% mutate(n = n()) %>% filter(n > 1)
 
-##Used to fix sheets
-# jp %>% filter(order %nin% c("Memorial", "Palomino")) %>% 
-#   left_join(., jpa, by = c("order" = "album")) %>% 
-#   rename(album = order, order = order.y) %>% 
-#   write_sheet(., "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
-
-# jp %>% mutate(order = gsub("\n", " ", order))%>%
-#    write_sheet(., "1HrP0_-kRKp0Uxpi_xmcPBpqH0fXviVmw7kZ--znjMk8", sheet = "rank_order")
-
-## add new albums for ranking
-# added_n %>% filter(Tier %in% 1:3) %>% sample_n(200) %>% select(2:4) %>%
-#   mutate(order = paste(album, artist, Year, sep = " ")) %>% 
-#   bind_rows(., jpa) %>% distinct() %>%
-#   write.csv(., "jp_albums.csv", row.names = FALSE)
-
-# jpa %>% select(-Order) %>% distinct() %>% write.csv(., "jp_albums.csv", row.names = FALSE)
-
-
-
-gg <- gen_jp_labels(tt)
-htmltools::div( htmltools::strong("Lucifer on the Sofa"), htmltools::br(), "Spoon", htmltools::br(),paste0("(", "2022", ")"))
-
-
-jpa %>% left_join(., 
-                  jp %>% count(order),
-                  by = c( "order")) %>% 
-  mutate(n = replace_na(n, 0), p = 1-(n/(1+max(n))), p = p^2, q = rank(p), qr = q/max(q)) %>% arrange(qr)
-
 ```
+
+```{r}
+require(RankAggreg)
+b2 <- read_xlsx("Book2.xlsx")
+
+mx <- t(b2)%>% 
+  as.matrix()
+
+ws <- tribble(~nx, ~w,
+              'cost', '.15',
+              'fancy', '2.20',
+              'kids_food', '.15',
+              'kids_play', '.10',
+              'margin', '.3',
+              'parking', '.1',
+              'travel', '.21')  %>% mutate(w = as.numeric(w))
+
+II <- bind_rows(ws) %>% arrange(nx) %>% group_by(nx) %>% mutate(n = 1:n()) %>%
+  pivot_wider(., names_from = "n", values_from = w) %>% left_join(data.frame(nx = rownames(mx)), ., by = "nx") %>% column_to_rownames("nx") %>% as.matrix()
+
+
+ragg <- RankAggreg(mx, 5, seed=100, importance  = II, rho=.1, verbose = FALSE)
+
+ragg$sample.size
+
+set.seed(100)
+w <- matrix(rnorm(20), ncol=5)
+w <- t(apply(w, 1, sort))
+
+plot(ragg)
+```
+
 
