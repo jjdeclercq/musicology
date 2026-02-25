@@ -53,3 +53,5 @@ rsconnect/
 
 # png
 /madness 2024/png
+
+.DS_store
